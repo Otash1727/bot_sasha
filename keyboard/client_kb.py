@@ -28,3 +28,16 @@ client_profile_kb=ReplyKeyboardMarkup(
     resize_keyboard=True,
     selective=True
 )
+
+client_group=ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text='PYTHON'),
+            KeyboardButton(text="PHP"),
+            KeyboardButton(text="HTML CSS")
+        ]
+    ],
+    resize_keyboard=True,
+    selective=True,
+    input_field_placeholder="which programming languages do you want to choose"
+)

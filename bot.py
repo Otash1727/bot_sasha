@@ -1,17 +1,17 @@
 import asyncio
 from aiogram import Bot,Dispatcher
-from handlers import client
+from handlers import client, none_command
 from database import client_info 
 
 
 async def main():
-    bot=Bot('5970463019:AAEZjWTh0TvAS3q2-N08zyG-2UMBxhpzzgk')
+    bot=Bot('6881326098:AAEbpDodIFDdQwUHn_rqUFfVvZNUMrXu2j0')
     dp=Dispatcher()
     print('Bot online....')
     client_info.sql_start()
 
     dp.include_router(client.router)
-
+    #dp.include_router(none_command.router2)
 
     await dp.start_polling(bot) 
     
