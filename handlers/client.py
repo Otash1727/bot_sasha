@@ -11,30 +11,28 @@ import logging
 
 router=Router()
 
-get_phone_number=None
-class Info(StatesGroup):
+
+class Form(StatesGroup):
     name=State()
-    phone=State()
+   
 
 
 @router.message(Command('start'))
-async def cdm_start(message:Message):
-    await message.answer('Hi there. What\'s your name', reply_markup=client_kb.contact_markup)
+async def cdm_start(message:Message,state:FSMContext):
+    await state.set_state(Form.name)
+    await message.answer('Hi there. What\'s your name')
 
+@router.message(Form.name)
+async def contact_number(message:Message, state:FSMContext):
+    await state.update_data(name=message.text)
+    await message.answer('Thnaks',reply_markup=client_kb.contact_markup)
+    data= await state.get_data()
+    for i in data.items():
+        print(i)
+    await state.clear()
+    
+    
+    
 
+   
 
-
-
-@router.message()
-async def students_commands(message:Message):
-    global get_phone_number
-    get_phone_number=message.contact
-    if get_phone_number!= None:
-        await message.answer(text="Okey", reply_markup=client_kb.client_profile_kb)
-    else:
-        message.answer('Mistake')
-
-
-@router.message(Text(equals='Referendum',ignore_case=True))
-async def Ref_click(message:Message):
-    await message.answer("Do'stlaringizni taklif qiling")
