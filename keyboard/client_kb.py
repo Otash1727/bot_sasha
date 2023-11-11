@@ -15,9 +15,9 @@ contact_markup=ReplyKeyboardMarkup(
 client_profile_kb=ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Referendum'),
+            KeyboardButton(text='Profile'),
             KeyboardButton(text="Status"),
-            KeyboardButton(text="Profile")
+            KeyboardButton(text="Referral")
         ],
         [
             KeyboardButton(text="Courses"),
