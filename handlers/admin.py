@@ -11,7 +11,7 @@ from database import admin_info
 
 router_admin=Router()
 
-pass_update=None
+pass_update=[]
 
 
 class Update_path(StatesGroup):
@@ -25,16 +25,16 @@ class Update_path(StatesGroup):
 @router_admin.message(F.text.lower()=='admin')
 async def admin_window_open(message:Message):
     global pass_update
+    pass_update=(await admin_info.get_pass())
+    print(pass_update)
     await message.answer(f'Welcome {message.from_user.full_name}')
     path=('12345',)
     await admin_info.old_pass(path)
     await message.answer('Please enter your passport')
     await message.delete()
-    pass_update=admin_info.get_pass()
-    print(pass_update)
-   
+     
 
-@router_admin.message(F.text=='12345')
+@router_admin.message(F.text.lower()==str(pass_update))
 async def check_password(message:Message):
         await message.answer(text='you answered correctly',reply_markup=admin_kb.admin_window_kb)
         await message.delete()

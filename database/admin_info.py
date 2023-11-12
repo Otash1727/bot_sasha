@@ -41,7 +41,8 @@ async def show_path(message,update_builder):
 async def get_pass():
     cur_admin.execute("SELECT password FROM admin_info")
     get_path=cur_admin.fetchall()
-    for i in str(get_path):
+    for i in (get_path):
         i
-    print(i)
+    return  re.sub("[(),'']",'', str(i))
+        
    
