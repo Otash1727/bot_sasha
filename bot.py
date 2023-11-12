@@ -1,7 +1,7 @@
 import asyncio
 from aiogram import Bot,Dispatcher
-from handlers import client, none_command
-from database import client_info 
+from handlers import client, none_command, admin
+from database import client_info,admin_info
 
 
 async def main():
@@ -9,9 +9,10 @@ async def main():
     dp=Dispatcher()
     print('Bot online....')
     client_info.sql_start()
+    admin_info.sql_start_admin()
 
     dp.include_router(client.router)
-    #dp.include_router(none_command.router2)
+    dp.include_router(admin.router_admin)
 
     await dp.start_polling(bot) 
     
