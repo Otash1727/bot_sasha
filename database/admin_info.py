@@ -16,7 +16,7 @@ async def old_pass(path):
     cur_admin.execute("INSERT INTO admin_info VALUES(?)",path,)
     db_admin.commit()
 
-async def update_pass(message,state):
+async def update_pass(callback,state):
     data= await state.get_data()
     path=(data['new_path'])
     print(path)

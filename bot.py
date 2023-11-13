@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Bot,Dispatcher
-from handlers import client, none_command, admin
+from handlers import client, none_command, admin, teacher
 from database import client_info,admin_info
 
 
@@ -13,7 +13,7 @@ async def main():
 
     dp.include_router(client.router)
     dp.include_router(admin.router_admin)
-
+    dp.include_router(teacher.router_teacher)
     await dp.start_polling(bot) 
     
 

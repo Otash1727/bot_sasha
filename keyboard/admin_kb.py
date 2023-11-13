@@ -32,6 +32,9 @@ admin_settings_kb=ReplyKeyboardMarkup(
         [
             KeyboardButton(text='Update password'),
             KeyboardButton(text='Change the language')
+        ],
+        [
+            KeyboardButton(text='back')
         ]
     ],
     resize_keyboard=True,
