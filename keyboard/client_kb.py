@@ -1,43 +1,48 @@
-from aiogram.types import (ReplyKeyboardMarkup,KeyboardButton,ReplyKeyboardRemove)
+from aiogram.types import (ReplyKeyboardMarkup,KeyboardButton,ReplyKeyboardRemove,InlineKeyboardButton,InlineKeyboardMarkup)
 
 
 
 contact_markup=ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text='Please send your phone number', request_contact=True)]
+        [KeyboardButton(text='Share your contact with us', request_contact=True)]
     ],
     input_field_placeholder='Must input your phone number',
     resize_keyboard=True,
-    selective=True
+    selective=True,
+
 )
 
+contact_remove=ReplyKeyboardRemove(remove_keyboard=True)
 
-client_profile_kb=ReplyKeyboardMarkup(
-    keyboard=[
+
+client_profile_kb=InlineKeyboardMarkup(
+    inline_keyboard=[
         [
-            KeyboardButton(text='Profile'),
-            KeyboardButton(text="Status"),
-            KeyboardButton(text="Referral")
+            InlineKeyboardButton(text='Profile', callback_data='profile'),
+            InlineKeyboardButton(text="Status", callback_data='status'),
+            InlineKeyboardButton(text="Referral",callback_data='referral')
         ],
         [
-            KeyboardButton(text="Courses"),
-            KeyboardButton(text="Lessons"),
-            KeyboardButton(text="Settings")
+            InlineKeyboardButton(text="Courses", callback_data='courses'),
+            InlineKeyboardButton(text="Lessons", callback_data='lessons'),
+            InlineKeyboardButton(text="Settings", callback_data='setting')
         ]
     ],
-    resize_keyboard=True,
-    selective=True
+   
 )
 
-client_group=ReplyKeyboardMarkup(
-    keyboard=[
+
+
+client_group=InlineKeyboardMarkup(
+    inline_keyboard=[
         [
-            KeyboardButton(text='PYTHON'),
-            KeyboardButton(text="PHP"),
-            KeyboardButton(text="HTML CSS")
+            InlineKeyboardButton(text='Python',callback_data='python')
+        ],
+        [
+            InlineKeyboardButton(text='Php',callback_data='php')
+        ],
+        [
+            InlineKeyboardButton(text='Html Css', callback_data='htmlcss')
         ]
-    ],
-    resize_keyboard=True,
-    selective=True,
-    input_field_placeholder="which programming languages do you want to choose"
+    ]
 )
