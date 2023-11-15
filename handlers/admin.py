@@ -1,5 +1,5 @@
 from aiogram import F,Router
-from aiogram.types import Message,CallbackQuery,KeyboardButton,ReplyKeyboardMarkup
+from aiogram.types import Message,CallbackQuery,KeyboardButton,ReplyKeyboardMarkup,Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder,InlineKeyboardButton,KeyboardBuilder   
 from aiogram.filters import Command, CommandStart, Filter
 from aiogram.fsm.context import FSMContext
@@ -7,35 +7,47 @@ from aiogram.fsm.state import State,StatesGroup
 from aiogram.utils.formatting import Text
 from keyboard import admin_kb
 from database import admin_info
+from create_bot import bot
 
 
 router_admin=Router()
 
-pass_update=[]
+
 
 
 class Update_path(StatesGroup):
-    new_path=State()
+    role=State()
+    extra_role=State()
+    payments=State()
+    invite_people=State()
+    cashback=State()
 
 
+"""  admin commands:
+        /find
+        /create
+        /transactions
+        /list of groups, courses, teachers, students, 
+        /group
+        /settings"""
 
 
-
-@router_admin.message(Command('admin'))
-@router_admin.message(F.text.lower()=='admin')
-async def admin_window_open(message:Message):
-    global pass_update
-    pass_update=(await admin_info.get_pass())
-    print(pass_update)
+@router_admin.message(Command('cyberhub'))
+@router_admin.message(F.text.lower()=='cyberhub')
+async def admin_window_open(message:Message):   
     await message.answer(f'Welcome {message.from_user.full_name}')
-    path=('12345',)
-    await admin_info.old_pass(path)
-    await message.answer('Please enter your passport')
-    await message.delete()
+    await bot.set_my_commands([BotCommand(command='find',description='Search all information'),BotCommand(command='create', description='create new informations'),BotCommand(command='transactions',description='Transaction history'),BotCommand(command='groups',description='List of group'),BotCommand(command='courses',description='List of courses'),BotCommand(command='teacher',description='teacher list'),BotCommand(command='student',description='Students list')],BotCommandScopeChat(chat_id=message.from_user.id ))  
+    """ admin deb belgilangan royhatdan olish kerak user_id ni"""
+
+
+
+
+    
+    
 
     """must fix pass_update """
 
-@router_admin.message(F.text=='12345')
+"""@router_admin.message(F.text=='12345')
 async def check_password(message:Message):
             await message.answer(text='you answered correctly',reply_markup=admin_kb.admin_window_kb)
             await message.delete()
@@ -96,3 +108,4 @@ async def find_command(message:Message):
     find_builder.row(KeyboardButton(text='Users'),KeyboardButton(text='Teachers'),KeyboardButton(text='Partners'),)
     find_builder.row(KeyboardButton(text='back'))
     await message.answer(f'{message.text.capitalize()} users teachers and partners',reply_markup=find_builder.as_markup(resize_keyboard=True))
+"""
