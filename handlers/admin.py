@@ -42,17 +42,15 @@ async def admin_window_open(message:Message):
 
 @router_admin.message(Command('find'))
 async def find_info(message:Message):
-        await message.answer(f'Please. Enter the information you want to search for')
-        find_builder=InlineKeyboardBuilder()  
-        find_builder.row(InlineKeyboardButton(
-        text='Search',callback_data='search'))
-        if message.text!='/find':
-            await message.answer("Search 🔎", reply_markup=find_builder.as_markup())    
+        click_kb=ReplyKeyboardBuilder()
+        click_kb.row(KeyboardButton(text='Click me'))
+        await message.answer('Click the button', reply_markup=click_kb.as_markup(resize_keyboard=True,input_field_placeholder='Click here'))    
 
-@router_admin.callback_query(F.data=='search')
-async def search_info(callback:CallbackQuery):
-     await callback.message.answer('1354')   
-
+@router_admin.message(F.text.lower()=='click me')
+async def search_info(message:Message):
+    await callback.message.answer('1354')   
+    find_builder=InlineKeyboardBuilder()  
+    find_builder.row(InlineKeyboardButton(text='Search',callback_data='search')) 
 
 
 
