@@ -36,16 +36,30 @@ class Update_path(StatesGroup):
 @router_admin.message(F.text.lower()=='cyberhub')
 async def admin_window_open(message:Message):   
     await message.answer(f'Welcome {message.from_user.full_name}')
-    await bot.set_my_commands([BotCommand(command='find',description='Search all information'),BotCommand(command='create', description='create new informations'),BotCommand(command='transactions',description='Transaction history'),BotCommand(command='groups',description='List of group'),BotCommand(command='courses',description='List of courses'),BotCommand(command='teacher',description='teacher list'),BotCommand(command='student',description='Students list')],BotCommandScopeChat(chat_id=message.from_user.id ))  
+    command_admin= await bot.set_my_commands([BotCommand(command='find',description='Search all information'),BotCommand(command='create', description='create new informations'),BotCommand(command='transactions',description='Transaction history'),BotCommand(command='groups',description='List of group'),BotCommand(command='courses',description='List of courses'),BotCommand(command='teacher',description='teacher list'),BotCommand(command='student',description='Students list')],BotCommandScopeChat(chat_id=message.from_user.id ))  
     """ admin deb belgilangan royhatdan olish kerak user_id ni"""
 
 
+@router_admin.message(Command('find'))
+async def find_info(message:Message):
+        await message.answer(f'Please. Enter the information you want to search for')
+        find_builder=InlineKeyboardBuilder()  
+        find_builder.row(InlineKeyboardButton(
+        text='Search',callback_data='search'))
+        if message.text!='/find':
+            await message.answer("Search 🔎", reply_markup=find_builder.as_markup())    
+
+@router_admin.callback_query(F.data=='search')
+async def search_info(callback:CallbackQuery):
+     await callback.message.answer('1354')   
+
+
 
 
     
     
 
-    """must fix pass_update """
+"""must fix pass_update """
 
 """@router_admin.message(F.text=='12345')
 async def check_password(message:Message):
