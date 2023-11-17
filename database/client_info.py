@@ -36,3 +36,7 @@ async def show_user_id(message):
         await bot.set_my_commands([BotCommand(command='register',description='Register to use our bot')],BotCommandScopeChat(chat_id=message.from_user.id))
         await message.answer('Register to use our bot')
 
+
+#async def add_info(message):
+
+

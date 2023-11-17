@@ -1,4 +1,4 @@
-from aiogram.types import (ReplyKeyboardMarkup,ReplyKeyboardRemove,KeyboardButton)
+from aiogram.types import (ReplyKeyboardMarkup,ReplyKeyboardRemove,KeyboardButton,InlineKeyboardButton,InlineKeyboardMarkup)
 
 """ admin commands:
         /find
@@ -9,34 +9,41 @@ from aiogram.types import (ReplyKeyboardMarkup,ReplyKeyboardRemove,KeyboardButto
         /settings        
 """
 
-admin_window_kb=ReplyKeyboardMarkup(
-    keyboard=[
+admin_window_kb=InlineKeyboardMarkup(
+    inline_keyboard=[
         [
-            KeyboardButton(text='Find'),
-            KeyboardButton(text='Create'),
-            KeyboardButton(text='Transactions')
+            InlineKeyboardButton(text=' 🔍 Search in all catigories', callback_data='find')]
+            ,
+        [
+            InlineKeyboardButton(text='Add informations ',callback_data='schoolinfo'),
+            InlineKeyboardButton(text='Transactions',callback_data='transaction')
         ],
         [
-            KeyboardButton(text='School informations '),
-            KeyboardButton(text='Group'),
-            KeyboardButton(text='Settings'),
+         #   InlineKeyboardButton(text='Create',callback_data='create'),
+            InlineKeyboardButton(text='Group',callback_data='group'),
+            InlineKeyboardButton(text='Settings',callback_data='settings'),
         ]
-    ],
-    selective=True,
-    resize_keyboard=True
+    ]   
 )
 
-
-admin_settings_kb=ReplyKeyboardMarkup(
-    keyboard=[
+show_group_list=InlineKeyboardMarkup(
+    inline_keyboard=[
         [
-            KeyboardButton(text='Update password'),
-            KeyboardButton(text='Change the language')
+            InlineKeyboardButton(text='Members of group',callback_data='members'),
+            InlineKeyboardButton(text='List of group')
+        ]
+    ]
+)
+
+add_info_kb=InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Marking the role', callback_data='Mrole'),
+            InlineKeyboardButton(text='List of payments',callback_data='Lpayments')
         ],
         [
-            KeyboardButton(text='back')
+            InlineKeyboardButton(text='List of parners',callback_data='partners'),
+            InlineKeyboardButton(text='Cashback',callback_data='cashback')
         ]
-    ],
-    resize_keyboard=True,
-    selective=True
+    ]
 )

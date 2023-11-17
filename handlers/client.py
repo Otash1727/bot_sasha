@@ -52,12 +52,7 @@ async def input_phone(message:Message,state:FSMContext):
         await bot.send_message(chat_id=message.from_user.id,text='Thanks',reply_markup=client_kb.contact_remove)
         await state.set_state(Form.prg_languages) 
         await message.answer('Which programming languages do you want to learn. \n Please select', reply_markup=client_kb.client_group)
-"""   /ref
-        /status
-        /lessons
-        /courses
-        /profile
-        /settings"""
+
 
 
 @router.callback_query(F.data=='python',Form.prg_languages)
@@ -86,6 +81,8 @@ async def language_coding(callback:CallbackQuery, state:FSMContext):
         await client_info.add_user_info(callback,state)
         await state.clear()
     await callback.message.delete_reply_markup()
+
+
 
 
 

@@ -1,6 +1,7 @@
 from aiogram import F,Router
 from aiogram.types import Message,CallbackQuery,KeyboardButton,ReplyKeyboardMarkup,Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder,InlineKeyboardButton,KeyboardBuilder   
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder,InlineKeyboardButton,KeyboardBuilder 
+from aiogram.methods.delete_my_commands import DeleteMyCommands  
 from aiogram.filters import Command, CommandStart, Filter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State,StatesGroup
@@ -33,27 +34,25 @@ class Update_path(StatesGroup):
 
 
 @router_admin.message(Command('cyberhub'))
-@router_admin.message(F.text.lower()=='cyberhub')
 async def admin_window_open(message:Message):   
     await message.answer(f'Welcome {message.from_user.full_name}')
-    command_admin= await bot.set_my_commands([BotCommand(command='find',description='Search all information'),BotCommand(command='create', description='create new informations'),BotCommand(command='transactions',description='Transaction history'),BotCommand(command='groups',description='List of group'),BotCommand(command='courses',description='List of courses'),BotCommand(command='teacher',description='teacher list'),BotCommand(command='student',description='Students list')],BotCommandScopeChat(chat_id=message.from_user.id ))  
+    await bot.set_my_commands([BotCommand(command='menu',description='Show catalog menu'),BotCommand(command='add',description='add the bot to catalog'),BotCommand(command='setlanguaeges',description='Set bot languages')],BotCommandScopeChat(chat_id=message.from_user.id))
     """ admin deb belgilangan royhatdan olish kerak user_id ni"""
 
 
-@router_admin.message(Command('find'))
+@router_admin.message(Command('menu'))
 async def find_info(message:Message):
-        click_kb=ReplyKeyboardBuilder()
-        click_kb.row(KeyboardButton(text='Click me'))
-        await message.answer('Click the button', reply_markup=click_kb.as_markup(resize_keyboard=True,input_field_placeholder='Click here'))    
+    await message.answer('You are in admin panel of cyberhub bot', reply_markup=admin_kb.admin_window_kb)
 
-@router_admin.message(F.text.lower()=='click me')
-async def search_info(message:Message):
-    await callback.message.answer('1354')   
-    find_builder=InlineKeyboardBuilder()  
-    find_builder.row(InlineKeyboardButton(text='Search',callback_data='search')) 
+@router_admin.callback_query(F.data=='find')
+async def search_info(callback:CallbackQuery):
+    await callback.answer('Type the information you want to search for')
+    await callback.message.delete_reply_markup()
+    """" To be continue"""
 
-
-
+@router_admin.callback_query(F.data=='schoolinfo')
+async def add_base(callback:CallbackQuery):
+    await callback.message.answer('')
     
     
 
