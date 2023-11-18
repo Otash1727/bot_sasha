@@ -42,8 +42,10 @@ add_info_kb=InlineKeyboardMarkup(
             InlineKeyboardButton(text='List of payments',callback_data='Lpayments')
         ],
         [
-            InlineKeyboardButton(text='List of parners',callback_data='partners'),
+            InlineKeyboardButton(text='List of part ners',callback_data='partners'),
             InlineKeyboardButton(text='Cashback',callback_data='cashback')
         ]
     ]
 )
+
+

@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State,StatesGroup
 from aiogram.utils.formatting import Text
 from keyboard import admin_kb
-from database import admin_info
+from database import *
 from create_bot import bot
 
 
@@ -16,12 +16,17 @@ router_admin=Router()
 
 
 
-class Update_path(StatesGroup):
+#class Update_path(StatesGroup):
+#    role=State()
+#    extra_role=State()
+#    payments=State()
+#    invite_people=State()
+#    cashback=State()
+
+class Role_path(StatesGroup):
+    name_role=State()
     role=State()
-    extra_role=State()
-    payments=State()
-    invite_people=State()
-    cashback=State()
+
 
 
 """  admin commands:
@@ -52,9 +57,32 @@ async def search_info(callback:CallbackQuery):
 
 @router_admin.callback_query(F.data=='schoolinfo')
 async def add_base(callback:CallbackQuery):
-    await callback.message.answer('')
+    await callback.message.answer('This is where you add information. Select categories',reply_markup=admin_kb.add_info_kb)
+   
+
+@router_admin.callback_query(F.data=='Mrole')
+async def mark_role(callback:CallbackQuery,state:FSMContext):
+    await state.set_state(Role_path.name_role)
+    await callback.message.answer('Input user name')
+
+@router_admin.message(Role_path.name_role)
+async def mark_name(message:Message,state:FSMContext):
+    data= await state.update_data(name_role=message.text)
+    await message.answer(f"{data['name_role']}\n Select role")
+    await state.set_state(Role_path.role)
     
+@router_admin.message(Role_path.role)
+async def mark_role(message:Message,state:FSMContext):
+    data= await state.update_data(role=message.text)
+    role_search=InlineKeyboardBuilder()
     
+    role_search.add(InlineKeyboardButton(text=f"{data['role']}\n save",callback_data='main_role'))
+    await message.answer('Are you sure?', reply_markup=role_search.as_markup())    
+
+@router_admin.callback_query(F.data=='main_role')
+async def save_role(callback:CallbackQuery, state:FSMContext): 
+    await client_info.role_user(callback,state)
+    await state.clear()
 
 """must fix pass_update """
 
