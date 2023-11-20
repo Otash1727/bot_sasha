@@ -9,11 +9,17 @@ from aiogram.utils.formatting import Text
 from keyboard import admin_kb
 from database import *
 from create_bot import bot
+import re
 
 
 router_admin=Router()
 
+class MyFilter(Filter):
+    def __init__(self, my_state: str) -> None:
+        self.my_state = my_state
 
+    async def __call__(self, state:FSMContext) -> bool:
+        return message.text == self.my_state
 
 
 #class Update_path(StatesGroup):
@@ -26,6 +32,18 @@ router_admin=Router()
 class Role_path(StatesGroup):
     name_role=State()
     role=State()
+
+class Payments_path(StatesGroup):
+    name_pay=State()
+    pay=State()
+
+class Partners_path(StatesGroup):
+    name_part=State()
+    part=State()
+
+class Cashback_path(StatesGroup):
+    name_cash=State()
+    cash=State()
 
 
 
@@ -58,24 +76,35 @@ async def search_info(callback:CallbackQuery):
 @router_admin.callback_query(F.data=='schoolinfo')
 async def add_base(callback:CallbackQuery):
     await callback.message.answer('This is where you add information. Select categories',reply_markup=admin_kb.add_info_kb)
-   
+
+
+""" PART MARKING THE ROLE """
+
+"""Marking user role"""
 
 @router_admin.callback_query(F.data=='Mrole')
 async def mark_role(callback:CallbackQuery,state:FSMContext):
     await state.set_state(Role_path.name_role)
-    await callback.message.answer('Input user name')
+    await callback.answer('Input student\'s name',show_alert=True)
 
 @router_admin.message(Role_path.name_role)
 async def mark_name(message:Message,state:FSMContext):
-    data= await state.update_data(name_role=message.text)
-    await message.answer(f"{data['name_role']}\n Select role")
-    await state.set_state(Role_path.role)
-    
+    ff=[]
+    data=await state.update_data(name_role=message.text.lower())
+    dd=await client_info.show_userinfo()
+    for i in dd:
+        ff.append(re.sub("[(),'']",'',str(i)))
+    if data['name_role'] in ff:
+        await message.answer(f"{data['name_role']}\n Select role")
+        await state.set_state(Role_path.role)
+    else:
+        await message.answer('No such user',reply_markup=admin_kb.add_info_kb)
+        await state.clear()        
+            
 @router_admin.message(Role_path.role)
 async def mark_role(message:Message,state:FSMContext):
     data= await state.update_data(role=message.text)
     role_search=InlineKeyboardBuilder()
-    
     role_search.add(InlineKeyboardButton(text=f"{data['role']}\n save",callback_data='main_role'))
     await message.answer('Are you sure?', reply_markup=role_search.as_markup())    
 
@@ -84,67 +113,69 @@ async def save_role(callback:CallbackQuery, state:FSMContext):
     await client_info.role_user(callback,state)
     await state.clear()
 
-"""must fix pass_update """
+"""List of payments"""
 
-"""@router_admin.message(F.text=='12345')
-async def check_password(message:Message):
-            await message.answer(text='you answered correctly',reply_markup=admin_kb.admin_window_kb)
-            await message.delete()
-       
-    #    await message.answer(text='You answered wrong')
-    #    return  await admin_window_open(message)
+@router_admin.callback_query(F.data=='Lpayments')
+async def mark_pay(callback:CallbackQuery,state:FSMContext):
+    await state.set_state(Payments_path.name_pay)
+    await callback.answer('Please. Input student\'s name',show_alert=True)
 
+@router_admin.message(Payments_path.name_pay)
+async def payment_name(message:Message,state:FSMContext):
+    pay_list=[]
+    data=await state.update_data(name_pay=message.text.lower())
+    dd=await client_info.show_userinfo() 
+    for i in dd:
+      pay_list.append(re.sub("[(),'']",'',str(i)))
+    if data['name_pay'] in pay_list:
+        await message.answer(f"{data['name_pay']}\n Enter payment info")
+        await state.set_state(Payments_path.pay) 
+    else:
+        await message.answer('No such user',reply_markup=admin_kb.add_info_kb)
+        await state.clear()
 
+@router_admin.message(Payments_path.pay)
+async def enter_pay(message:Message,state:FSMContext):
+    data=await state.update_data(pay=message.text.lower())
+    pay_search=InlineKeyboardBuilder()
+    pay_search.add(InlineKeyboardButton(text=f"{data['pay']}\n Save",callback_data='main_pay'))
+    await message.answer('Are you sure?', reply_markup=pay_search.as_markup())
 
-@router_admin.message(Command('Settings'))
-@router_admin.message(F.text.lower()=='settings')
-async def settings_admin(message:Message):
-    await message.answer(text='Admin Settings',reply_markup=admin_kb.admin_settings_kb)
+@router_admin.callback_query(F.data=='main_pay')
+async def save_role(callback:CallbackQuery, state:FSMContext): 
+    await client_info.pay_user(callback, state)
+    await state.clear()
 
+""" List of partners """
+@router_admin.callback_query(F.data=='partners')
+async def mark_part(callback:CallbackQuery,state:FSMContext):
+    await state.set_state(Partners_path.name_part)
+    await callback.answer("Please. Enter student\'s name",show_alert=True)
 
-@router_admin.message(F.text.lower()=='update password')
-#@router_admin.message(F.text.endswith(''))
-async def show_path(message:Message):
-    update_builder=InlineKeyboardBuilder()
-    update_builder.row(InlineKeyboardButton(text='Update',callback_data='Update'))
-    await message.answer(text=f"{message.text.capitalize()}")
-    await admin_info.show_path(message,update_builder) 
+@router_admin.message(Partners_path.name_part)
+async def partners_name(message:Message,state:FSMContext):
+    await state.update_data(Partners_path.name_part)
+    part_list=[]
+    data=await state.update_data(name_part=message.text.lower())
+    dd=await client_info.show_userinfo() 
+    for i in dd:
+      part_list.append(re.sub("[(),'']",'',str(i)))
+    if data['name_part'] in part_list:
+        await message.answer(f"{data['name_part']}\n Enter partners info")
+        await state.set_state(Partners_path.part) 
+    else:
+        await message.answer('No such user',reply_markup=admin_kb.add_info_kb)
+        await state.clear()
 
-@router_admin.callback_query()
-async def update_path(callback:CallbackQuery,state:FSMContext):
-    if callback.data=='Update':
-        await callback.answer('Please input new password')
-        await state.set_state(Update_path.new_path)
+@router_admin.message(Partners_path.part)
+async def enter_part(message:Message,state:FSMContext):
+    data=await state.update_data(part=message.text.lower())
+    part_search=InlineKeyboardBuilder()
+    part_search.add(InlineKeyboardButton(text=f"{data['part']}\n Save",callback_data='main_part'))
+    await message.answer('Are you sure?', reply_markup=part_search.as_markup())
 
-@router_admin.message(Update_path.new_path)
-async def update_path2(message:Message, state:FSMContext):
-    save_builder=InlineKeyboardBuilder()
-    save_builder.row(InlineKeyboardButton(text='Save',callback_data='Save'))
-    await state.update_data(new_path=message.text)
-    await message.delete()
-    data= await state.get_data()
-    if data['new_path']!='':
-        await message.answer(f"Your new password {data['new_path']}",reply_markup=save_builder.as_markup())
-        
-       
-@router_admin.callback_query()
-async def save_path(callback:CallbackQuery,state:FSMContext):
-     if callback.data=='Save':
-        await admin_info.update_pass(callback,state)
-        await state.clear()  
-        await callback.answer('Your new password save')
+@router_admin.callback_query(F.data=='main_part')
+async def save_role(callback:CallbackQuery, state:FSMContext): 
+    await client_info.part_user(callback,state)
+    await state.clear()
 
-@router_admin.message(Command('back'))
-@router_admin.message(F.text.lower()=='back')
-async def back_command(message:Message):
-    await  message.answer(f'{message.text}', reply_markup=admin_kb.admin_window_kb)
-
-
-@router_admin.message(Command('Find'))
-@router_admin.message(F.text.lower()=='find')
-async def find_command(message:Message):
-    find_builder=ReplyKeyboardBuilder()
-    find_builder.row(KeyboardButton(text='Users'),KeyboardButton(text='Teachers'),KeyboardButton(text='Partners'),)
-    find_builder.row(KeyboardButton(text='back'))
-    await message.answer(f'{message.text.capitalize()} users teachers and partners',reply_markup=find_builder.as_markup(resize_keyboard=True))
-"""
