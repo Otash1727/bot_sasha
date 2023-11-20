@@ -45,6 +45,8 @@ class Cashback_path(StatesGroup):
     name_cash=State()
     cash=State()
 
+class Search_catigories(StatesGroup):
+    name_catigories=State()
 
 
 """  admin commands:
@@ -67,18 +69,14 @@ async def admin_window_open(message:Message):
 async def find_info(message:Message):
     await message.answer('You are in admin panel of cyberhub bot', reply_markup=admin_kb.admin_window_kb)
 
-@router_admin.callback_query(F.data=='find')
-async def search_info(callback:CallbackQuery):
-    await callback.answer('Type the information you want to search for')
-    await callback.message.delete_reply_markup()
-    """" To be continue"""
+
 
 @router_admin.callback_query(F.data=='schoolinfo')
 async def add_base(callback:CallbackQuery):
     await callback.message.answer('This is where you add information. Select categories',reply_markup=admin_kb.add_info_kb)
 
 
-""" PART MARKING THE ROLE """
+""" PART MARKING THE ROLE PAYMENTS, PARTNERS CASHBACK"""
 
 """Marking user role"""
 
@@ -154,7 +152,6 @@ async def mark_part(callback:CallbackQuery,state:FSMContext):
 
 @router_admin.message(Partners_path.name_part)
 async def partners_name(message:Message,state:FSMContext):
-    await state.update_data(Partners_path.name_part)
     part_list=[]
     data=await state.update_data(name_part=message.text.lower())
     dd=await client_info.show_userinfo() 
@@ -179,3 +176,46 @@ async def save_role(callback:CallbackQuery, state:FSMContext):
     await client_info.part_user(callback,state)
     await state.clear()
 
+""""Cashback"""
+@router_admin.callback_query(F.data=='cashback')
+async def mark_cash(callback:CallbackQuery,state:FSMContext):
+    await state.set_state(Cashback_path.name_cash)
+    await callback.answer("Please. Enter student\'s name",show_alert=True)
+
+@router_admin.message(Cashback_path.name_cash)
+async def cashback_name(message:Message,state:FSMContext):
+    cash_list=[]
+    data=await state.update_data(name_cash=message.text.lower())
+    dd=await client_info.show_userinfo() 
+    for i in dd:
+      cash_list.append(re.sub("[(),'']",'',str(i)))
+    if data['name_cash'] in cash_list:
+        await message.answer(f"{data['name_cash']}\n Enter the student's cashback details")
+        await state.set_state(Cashback_path.cash) 
+    else:
+        await message.answer('No such user',reply_markup=admin_kb.add_info_kb)
+        await state.clear()
+
+@router_admin.message(Cashback_path.cash)
+async def enter_cash(message:Message,state:FSMContext):
+    data=await state.update_data(cash=message.text.lower())
+    cash_search=InlineKeyboardBuilder()
+    cash_search.add(InlineKeyboardButton(text=f"{data['cash']}\n Save",callback_data='main_cash'))
+    await message.answer('Are you sure?', reply_markup=cash_search.as_markup())
+
+@router_admin.callback_query(F.data=='main_cash')
+async def save_cash(callback:CallbackQuery, state:FSMContext): 
+    await client_info.cash_user(callback,state)
+    await state.clear()
+
+
+"""" PART-2 SEARCH IN ALL INFORMATION """
+@router_admin.callback_query(F.data=='find')
+async def search_info(callback:CallbackQuery,state:FSMContext):
+    await callback.answer('Type the information you want to search for\n Enter information',show_alert=True)
+    await state.set_state(Search_catigories.name_catigories)
+    
+@router_admin.message(Search_catigories.name_catigories)
+async def  search_fsm(message:Message,state:FSMContext):
+    await state.update_data(name_catigories=message.text.lower())
+    await client_info.find_all_catigories(message=message,state=state)   
