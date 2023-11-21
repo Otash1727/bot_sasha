@@ -48,6 +48,12 @@ class Cashback_path(StatesGroup):
 class Search_catigories(StatesGroup):
     name_catigories=State()
 
+class Group(StatesGroup):
+    name_group=State()
+
+class Transaction(StatesGroup):
+    name_transaction=State()
+
 
 """  admin commands:
         /find
@@ -218,4 +224,38 @@ async def search_info(callback:CallbackQuery,state:FSMContext):
 @router_admin.message(Search_catigories.name_catigories)
 async def  search_fsm(message:Message,state:FSMContext):
     await state.update_data(name_catigories=message.text.lower())
-    await client_info.find_all_catigories(message=message,state=state)   
+    await client_info.find_all_catigories(message=message,state=state) 
+    await state.clear()  
+
+""" PART 3 group"""
+
+@router_admin.callback_query(F.data=='group')
+async def group_list(callback:CallbackQuery, state:FSMContext):
+    await callback.message.answer('Which group would you like to know about ?',reply_markup=admin_kb.list_group)
+    await state.set_state(Group.name_group)
+
+@router_admin.callback_query(F.data=='python_group',Group.name_group)
+@router_admin.callback_query(F.data=='php_group',Group.name_group)
+@router_admin.callback_query(F.data=='htmlcss_group',Group.name_group)
+async def show_group(callback:CallbackQuery,state:FSMContext):
+    if callback.data=='python_group':
+        await state.update_data(name_group='python')
+        await client_info.show_list(callback,state)
+    if callback.data=='php_group':
+        await state.update_data(name_group='php')
+        await client_info.show_list(callback,state)
+    if callback.data=='htmlcss_group':
+        await state.update_data(name_group='htmlcss')
+        await client_info.show_list(callback,state)
+    await state.clear()
+
+"""PART 4 transaction"""
+
+@router_admin.callback_query(F.data=='transaction')
+async def transaction_history(callback:CallbackQuery,state:FSMContext):
+    await state.set_state(Transaction.name_transaction)
+    await callback.answer("Would you like to know about transaction informations\n Enter Student's full name or monthly payment info or cashback info")
+
+@router_admin.message(Transaction.name_transaction)
+async def find_transaction(message:Message,state:FSMContext):
+    await state.update_data(name_transaction=message.text.lower())

@@ -13,17 +13,17 @@ def sql_start():
 
     if db:
         print('Data base connected OK!')
-    cur.execute(""" CREATE TABLE IF NOT EXISTS info_users(full_name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback)""")
+    cur.execute(""" CREATE TABLE IF NOT EXISTS info_users(name,sur_name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback)""")
     db.commit()
     cur.execute("INSERT INTO info_users(full_name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback) VALUES(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL)")
     db.commit()
 
 
-
+""" Client info"""
 async def add_user_info(callback,state):
     data= await state.get_data()
-    info=(data['name'],data['phone'],data['prg_languages'],data['user_id'])       
-    cur.execute("""INSERT INTO info_users(full_name,phone,programming_languages,user_id) VALUES(?,?,?,?)""",info)
+    info=(data['name'],data['sur_name'],data['phone'],data['prg_languages'],data['user_id'])       
+    cur.execute("""INSERT INTO info_users(name,sur_name,phone,programming_languages,user_id) VALUES(?,?,?,?,?)""",info)
     db.commit()
 
 async def show_user_id(message):
@@ -53,18 +53,18 @@ async def role_user(callback,state):
     data= await state.get_data()
     role_info=[data['role'],data['name_role']]
     role_info2=[data['name_role'],]
-    cur.execute('SELECT full_name FROM info_users')
+    cur.execute('SELECT name,sur_name FROM info_users')
     role_u=cur.fetchall()
     for i in role_u:
         no_symbol.append(re.sub("[(),'']",'',str(i)))
     if data['name_role'] in no_symbol:
-        cur.execute('UPDATE info_users SET role=? WHERE full_name=?',role_info,)
+        cur.execute('UPDATE info_users SET role=? WHERE name=?,sur_name=?',role_info,)
         db.commit()
-        cur.execute('SELECT full_name,role FROM info_users WHERE full_name=?',role_info2,)
+        cur.execute('SELECT name,sur_name,role FROM info_users WHERE name=?,sur_name=?',role_info2,)
         show_r=cur.fetchall()
         for ii in show_r:
             (re.sub("[(),'']",'',str(ii)))
-        await callback.answer(f'Your information has been saved\n user-{ii[0]}\nrole-{ii[1]}',show_alert=True)    
+        await callback.answer(f'Your information has been saved\n users name-{ii[0]}\nusers surname {i[1]}\nrole-{ii[2]}',show_alert=True)    
     else:
         await callback.message.answer('No such user',reply_markup=admin_kb.add_info_kb)
 
@@ -139,7 +139,7 @@ async def cash_user(callback,state):
 async def find_all_catigories(message,state):
     cash_symbol=[]
     data= await state.get_data()
-    catigories=[data['name_catigories'],]
+    catigories=[(data['name_catigories']),]
     
     """Search by name"""
     cur.execute('SELECT * FROM info_users WHERE full_name=?',catigories)
@@ -195,6 +195,8 @@ async def find_all_catigories(message,state):
     for cashback in cash_search:
         re.sub("[(),'']",'',str(cashback))
     
+    """Search by transaction"""
+    
     try:
         if имя!=[]:
             print(1)
@@ -211,7 +213,7 @@ async def find_all_catigories(message,state):
     except UnboundLocalError:
         print(0)
     else:
-        for имя in name_search:
+        for тел in phone_search:
             re.sub("[(),'']",'',str(тел))
             await message.answer(f"Student - {тел[0]}\nPhone number - {тел[1]}\nProgramming languages - {тел[2]}\nUser_id - {тел[3]}\nRole - {тел[4]}\nExtra role - {тел[5]}\nMonthly payment - {тел[6]},\nInvited poeple- {тел[7]}\nCashback - {тел[8]} ")
 
@@ -284,9 +286,38 @@ async def find_all_catigories(message,state):
         for cashback in name_search:
             re.sub("[(),'']",'',str(cashback))
         await message.answer(f"Student - {cashback[0]}\nPhone number - {cashback[1]}\nProgramming languages - {cashback[2]}\nUser_id - {cashback[3]}\nRole - {cashback[4]}\nExtra role - {cashback[5]}\nMonthly payment - {cashback[6]},\nInvited poeple- {cashback[7]}\nCashback - {cashback[8]} ")
+   #try:
+   #    if extra!=[] and cashback!=[] and  idd!=[] and role!=[] and payment!=[] and invite!=[] and languages!=[] and имя!=[] and тел!=[]:
+   #        print('Information not found')
+   #except UnboundLocalError:
+""" PART 3 Group  """
+
+async def show_list(callback,state):
+    data= await state.get_data()
+    info_group=[data['name_group']]
+    cur.execute("SELECT full_name,programming_languages FROM info_users WHERE programming_languages=?",info_group,)
+    show_group_list=cur.fetchall()
+    for i in show_group_list:
+        re.sub("[(),'']",'' , str(i))
     try:
-        if extra!=[] and cashback!=[] and  idd!=[] and role!=[] and payment!=[] and invite!=[] and languages!=[] and имя!=[]  
+        if i!=[]:
+            print(1)
+    except UnboundLocalError:
+        await callback.message.answer('Not found information')
+    else:
+        for i in show_group_list:
+            re.sub("[(),'']",'' , str(i))    
+        await callback.message.answer(f"Student's- {i[0]}\nProgramming languages - {i[1]}")
+
+"""PArt 4 transaction"""   
+
+async def transaction_info(state,message):
+    data= await state.get_data()
+    trans=[data['name_transaction']]
+    """ Search by full_name """
+    cur.execute("SELECT payments,cashback FROM info_users WHERE full_name=?",trans,)
+    trans_name=cur.fetchall()
+    cur.execute("SELECT payments,cashback FROM info_users WHERE full_name=?",trans,)
+    trans_name=cur.fetchall()
 
 
-
-#idd,role,extra,payment,invite,cashback

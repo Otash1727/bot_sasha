@@ -47,5 +47,17 @@ add_info_kb=InlineKeyboardMarkup(
         ]
     ]
 )
-
+list_group=InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Python',callback_data='python_group')
+        ],
+        [
+            InlineKeyboardButton(text="HTML CSS",callback_data='htmlcss_group')
+        ],
+        [
+            InlineKeyboardButton(text='PHP',callback_data='php_group')
+        ]
+    ]
+)
 
