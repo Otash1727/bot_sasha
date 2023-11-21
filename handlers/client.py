@@ -49,6 +49,7 @@ async def input_name(message:Message, state:FSMContext):
 async def input_surname(message:Message,state:FSMContext):
     data=await state.update_data(sur_name=message.text.lower())    
     await message.answer(f"Okey now you need to send your phone number", reply_markup=client_kb.contact_markup)
+    await state.set_state(Form.phone)
 @router.message(Form.phone)
 async def input_phone(message:Message,state:FSMContext):
     data=await state.update_data(phone=message.contact.phone_number)

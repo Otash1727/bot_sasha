@@ -7,7 +7,7 @@ from create_bot import bot, dp
 async def main():
     print('Bot online....')
     client_info.sql_start()
-    admin_info.sql_start_admin()
+    
 
     dp.include_router(client.router)
     dp.include_router(admin.router_admin)

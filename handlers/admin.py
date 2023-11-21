@@ -94,11 +94,18 @@ async def mark_role(callback:CallbackQuery,state:FSMContext):
 @router_admin.message(Role_path.name_role)
 async def mark_name(message:Message,state:FSMContext):
     ff=[]
+    fff=[]
     data=await state.update_data(name_role=message.text.lower())
     dd=await client_info.show_userinfo()
+    ddd=await client_info.show_surname()
     for i in dd:
         ff.append(re.sub("[(),'']",'',str(i)))
+    for ii in ddd:
+        fff.append(re.sub("[(),'']",'',str(ii)))
     if data['name_role'] in ff:
+        await message.answer(f"{data['name_role']}\n Select role")
+        await state.set_state(Role_path.role)
+    if data['name_role'] in fff:
         await message.answer(f"{data['name_role']}\n Select role")
         await state.set_state(Role_path.role)
     else:
@@ -127,13 +134,22 @@ async def mark_pay(callback:CallbackQuery,state:FSMContext):
 @router_admin.message(Payments_path.name_pay)
 async def payment_name(message:Message,state:FSMContext):
     pay_list=[]
+    pay_surname=[]
     data=await state.update_data(name_pay=message.text.lower())
     dd=await client_info.show_userinfo() 
+    ddd= await client_info.show_surname()
+    #copy by name 
     for i in dd:
       pay_list.append(re.sub("[(),'']",'',str(i)))
+    #Copy by surname
+    for ii in ddd:
+      pay_surname.append(re.sub("[(),'']",'',str(ii)))
     if data['name_pay'] in pay_list:
         await message.answer(f"{data['name_pay']}\n Enter payment info")
-        await state.set_state(Payments_path.pay) 
+        await state.set_state(Payments_path.pay)
+    elif data['name_pay'] in pay_surname:
+        await message.answer(f"{data['name_pay']}\n Enter payment info")
+        await state.set_state(Payments_path.pay)     
     else:
         await message.answer('No such user',reply_markup=admin_kb.add_info_kb)
         await state.clear()
@@ -159,16 +175,29 @@ async def mark_part(callback:CallbackQuery,state:FSMContext):
 @router_admin.message(Partners_path.name_part)
 async def partners_name(message:Message,state:FSMContext):
     part_list=[]
+    part_surname=[]
     data=await state.update_data(name_part=message.text.lower())
     dd=await client_info.show_userinfo() 
+    ddd=await client_info.show_surname()
+    #copy by name 
     for i in dd:
       part_list.append(re.sub("[(),'']",'',str(i)))
+    
+    #copy by surname
+    for ii in ddd:
+      part_surname.append(re.sub("[(),'']",'',str(ii)))
+    
     if data['name_part'] in part_list:
+        await message.answer(f"{data['name_part']}\n Enter partners info")
+        await state.set_state(Partners_path.part) 
+    
+    elif data['name_part'] in part_surname:
         await message.answer(f"{data['name_part']}\n Enter partners info")
         await state.set_state(Partners_path.part) 
     else:
         await message.answer('No such user',reply_markup=admin_kb.add_info_kb)
         await state.clear()
+        
 
 @router_admin.message(Partners_path.part)
 async def enter_part(message:Message,state:FSMContext):
@@ -191,13 +220,25 @@ async def mark_cash(callback:CallbackQuery,state:FSMContext):
 @router_admin.message(Cashback_path.name_cash)
 async def cashback_name(message:Message,state:FSMContext):
     cash_list=[]
+    cash_surname=[]
     data=await state.update_data(name_cash=message.text.lower())
     dd=await client_info.show_userinfo() 
+    ddd= await client_info.show_surname()
+    # copy by name
     for i in dd:
       cash_list.append(re.sub("[(),'']",'',str(i)))
+    # copy by surname
+    for ii in ddd:
+      cash_surname.append(re.sub("[(),'']",'',str(ii)))  
+    
     if data['name_cash'] in cash_list:
         await message.answer(f"{data['name_cash']}\n Enter the student's cashback details")
         await state.set_state(Cashback_path.cash) 
+   
+    elif data['name_cash'] in cash_surname:
+        await message.answer(f"{data['name_cash']}\n Enter the student's cashback details")
+        await state.set_state(Cashback_path.cash) 
+    
     else:
         await message.answer('No such user',reply_markup=admin_kb.add_info_kb)
         await state.clear()
@@ -252,10 +293,25 @@ async def show_group(callback:CallbackQuery,state:FSMContext):
 """PART 4 transaction"""
 
 @router_admin.callback_query(F.data=='transaction')
-async def transaction_history(callback:CallbackQuery,state:FSMContext):
-    await state.set_state(Transaction.name_transaction)
-    await callback.answer("Would you like to know about transaction informations\n Enter Student's full name or monthly payment info or cashback info")
+async def transaction_history(callback:CallbackQuery):
+    await callback.message.answer("Would you like to know about transaction informations\n Enter Student's  name or surname or monthly payment info or cashback info, group",reply_markup=admin_kb.transaction_kb)
 
-@router_admin.message(Transaction.name_transaction)
-async def find_transaction(message:Message,state:FSMContext):
-    await state.update_data(name_transaction=message.text.lower())
+@router_admin.callback_query(F.data=='by_group')
+async def find_transaction(callback:CallbackQuery,state:FSMContext):
+    await state.set_state(Transaction.name_transaction)
+    await callback.message.answer("Choose the group",reply_markup=admin_kb.list_group)
+
+@router_admin.callback_query(F.data=='python_group',Transaction.name_transaction)
+@router_admin.callback_query(F.data=='php_group',Transaction.name_transaction)
+@router_admin.callback_query(F.data=='htmlcss_group',Transaction.name_transaction)
+async def show_group(callback:CallbackQuery,state:FSMContext):
+    if callback.data=='python_group':
+        await state.update_data(name_group='python')
+        await client_info.show_list(callback,state)
+    if callback.data=='php_group':
+        await state.update_data(name_group='php')
+        await client_info.show_list(callback,state)
+    if callback.data=='htmlcss_group':
+        await state.update_data(name_group='htmlcss')
+        await client_info.show_list(callback,state)
+    await state.clear()

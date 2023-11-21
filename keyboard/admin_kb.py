@@ -61,3 +61,14 @@ list_group=InlineKeyboardMarkup(
     ]
 )
 
+transaction_kb=InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Search by Group',callback_data='by_group')
+        ],
+        [
+            InlineKeyboardButton(text='Search by other catigories',callback_data='other_catigories')
+        ]
+    ]
+)
+
