@@ -14,12 +14,6 @@ import re
 
 router_admin=Router()
 
-class MyFilter(Filter):
-    def __init__(self, my_state: str) -> None:
-        self.my_state = my_state
-
-    async def __call__(self, state:FSMContext) -> bool:
-        return message.text == self.my_state
 
 
 #class Update_path(StatesGroup):
@@ -307,11 +301,22 @@ async def find_transaction(callback:CallbackQuery,state:FSMContext):
 async def show_group(callback:CallbackQuery,state:FSMContext):
     if callback.data=='python_group':
         await state.update_data(name_group='python')
-        await client_info.show_list(callback,state)
+        await client_info.show_transaction(callback,state)
     if callback.data=='php_group':
         await state.update_data(name_group='php')
-        await client_info.show_list(callback,state)
+        await client_info.show_transaction(callback,state)
     if callback.data=='htmlcss_group':
         await state.update_data(name_group='htmlcss')
-        await client_info.show_list(callback,state)
+        await client_info.show_transaction(callback,state)
     await state.clear()
+
+@router_admin.callback_query(F.data=='other_catigories')
+async def find_other(callback:CallbackQuery, state:FSMContext):
+    await callback.answer('Enter the data type',show_alert=True)
+    await state.set_state(Transaction.name_transaction)
+
+@router_admin.message(Transaction.name_transaction)
+async def get_find(message:Message, state:FSMContext):
+    data=await state.update_data(name_transaction=message.text.lower())
+    await client_info.other_catigories(message=message,state=state)
+    await state.clear() 

@@ -398,13 +398,85 @@ async def show_list(callback,state):
 
 """PArt 4 transaction"""   
 
-async def transaction_info(state,message):
+""" Search by group"""
+async def show_transaction(callback,state):
     data= await state.get_data()
-    trans=[data['name_transaction']]
-    """ Search by full_name """
-    cur.execute("SELECT payments,cashback FROM info_users WHERE full_name=?",trans,)
-    trans_name=cur.fetchall()
-    cur.execute("SELECT payments,cashback FROM info_users WHERE full_name=?",trans,)
-    trans_name=cur.fetchall()
+    info_group=[data['name_group']]
+    cur.execute("SELECT name,sur_name,payments,cashback FROM info_users WHERE programming_languages=?",info_group,)
+    show_group_list=cur.fetchall()
+    for i in show_group_list:
+        re.sub("[(),'']",'' , str(i))
+    try:
+        if i!=[]:
+            print(1)
+    except UnboundLocalError:
+        await callback.message.answer('Not found information')
+    else:
+        for i in show_group_list:
+            re.sub("[(),'']",'' , str(i))    
+        await callback.message.answer(f"Student's- {i[0]} {i[1]}\nPayments - {i[2]}\nCashback - {i[3]}")
 
+"""Search by other catigories"""
+async def other_catigories(message,state):
+    data= await state.get_data()
+    history_transaction=[data['name_transaction']]
+    # copy by name in database
+    cur.execute("SELECT name,sur_name,programming_languages,payments,cashback FROM info_users WHERE name=?",history_transaction,)
+    other_n=cur.fetchall()
+    for i in other_n:
+        re.sub("[(),'']",'',str(i))
+    #copy by surname in database
+    cur.execute("SELECT name,sur_name,programming_languages,payments,cashback FROM info_users WHERE sur_name=?",history_transaction,)
+    other_s=cur.fetchall()
+    for i2 in other_s:
+        re.sub("[(),'']",'',str(i2))
+    # copy by payments in database REGAPX ISHLATISH KERAK
+    cur.execute("SELECT name,sur_name,programming_languages,payments,cashback FROM info_users WHERE payments=?",history_transaction,)
+    other_p=cur.fetchall()
+    for i3 in other_p:
+        re.sub("[(),'']",'',str(i3))
+    #copy by cashback in database
+    cur.execute("SELECT name,sur_name,programming_languages,payments,cashback FROM info_users WHERE cashback=?",history_transaction,)
+    other_c=cur.fetchall()
+    for i4 in other_c:
+        re.sub("[(),'']",'',str(i4))
+    
+    try:
+        if i!=[]:
+            i
+    except UnboundLocalError:
+        print(0)
+    else:
+        for i in other_n:
+            re.sub("[(),'']",'',str(i))
+        await message.answer(f"Student's - {i[0]} {i[1]}\nProgramming languages - {i[2]}\nPayments - {i[3]}\nCashback - {i[4]}")
+    
+    try:
+        if i2!=[]:
+            i2
+    except UnboundLocalError:
+        print(0)
+    else:
+        for i2 in other_s:
+            re.sub("[(),'']",'',str(i2))
+        await message.answer(f"Student's - {i2[0]} {i2[1]}\nProgramming languages - {i2[2]}\nPayments - {i2[3]}\nCashback - {i2[4]}")
+    
+    try:
+        if i3!=[]:
+            i3
+    except UnboundLocalError:
+        print(0)
+    else:
+        for i3 in other_p:
+            re.sub("[(),'']",'',str(i3))
+        await message.answer(f"Student's - {i3[0]} {i3[1]}\nProgramming languages - {i3[2]}\nPayments - {i3[3]}\nCashback - {i3[4]}")
 
+    try:
+        if i4!=[]:
+            i4
+    except UnboundLocalError:
+        print(0)
+    else:
+        for i4 in other_c:
+            re.sub("[(),'']",'',str(i4))
+        await message.answer(f"Student's - {i4[0]} {i4[1]}\nProgramming languages - {i4[2]}\nPayments - {i4[3]}\nCashback - {i4[4]}")

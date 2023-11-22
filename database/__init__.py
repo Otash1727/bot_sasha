@@ -1,1 +1,1 @@
-from database import client_info,admin_info
+from database import *
