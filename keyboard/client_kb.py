@@ -36,13 +36,16 @@ client_profile_kb=InlineKeyboardMarkup(
 client_group=InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text='Python',callback_data='python')
+            InlineKeyboardButton(text='Python',callback_data='python_info')
         ],
         [
-            InlineKeyboardButton(text='Php',callback_data='php')
+            InlineKeyboardButton(text='Php',callback_data='php_info')
         ],
         [
-            InlineKeyboardButton(text='Html Css', callback_data='htmlcss')
+            InlineKeyboardButton(text='Html Css', callback_data='html_info')
+        ],
+        [
+            InlineKeyboardButton(text='Flutter', callback_data='flutter_info')
         ]
     ]
 )
