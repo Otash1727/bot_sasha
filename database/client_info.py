@@ -18,29 +18,36 @@ def sql_start():
     cur.execute("INSERT INTO info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info) VALUES(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'python','html','php','flutter')")
     db.commit()
 
+
 """ function languages info"""    
 async def python_info(callback):
-    callback_id=callback.from_user.id
-    cur.execute(f"SELECT {callback.data} FROM info_users WHERE user_id=?",callback_id)
+    callback_id=''
+    cur.execute(f"SELECT {callback.data} FROM info_users WHERE user_id=?",callback.from_user.id,)
     show_languages=cur.fetchall()
     return show_languages
-             
-    
-    
-    
+                  
 
-""" Client info"""
+""" Client info"""  
 async def add_user_info(state):
+    python='python'
+    php='php'
+    html='html'
+    flutter='flutter'
     data= await state.get_data()
     info=(data['name'],data['phone'],data['user_id'])       
-    cur.execute("""INSERT INTO info_users(name,phone,user_id) VALUES(?,?,?)""",info)
-    
+    cur.execute(f"INSERT INTO info_users(name,phone,user_id,python_info,html_info,php_info,flutter_info) VALUES(?,?,?,'{python}','{html}','{php}','{flutter}')",info)
     db.commit()
 
 async def show_user_id():
     cur.execute("SELECT user_id FROM info_users")
     check_id=cur.fetchall()
     return check_id
+
+"""python html php flutter info"""
+async def languages_info(message):
+    info_IT=['python','html','php','flutter',f'{message.from_user.id}']
+    cur.execute("INSERT INTO users_info(python_info,html_info,php_info_flutter_info) VALUES(?,?,?,?) WHERE user_id=?",info_IT)
+
 """General function"""
 async def show_userinfo():
     cur.execute("SELECT name FROM info_users")

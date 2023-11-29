@@ -38,6 +38,7 @@ async def cdm_start(message:Message,state:FSMContext):
         await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=message.from_user.id))
     else:
         await message.answer('Hello you want to register our bot. Please input your name')
+        
         await state.set_state(Form.name)
 
 
@@ -61,19 +62,20 @@ async def input_phone(message:Message,state:FSMContext):
         await message.answer('Which programming languages do you want to learn. \n Please select', reply_markup=client_kb.client_group)
 
 
-
 @router.callback_query(F.data=='python_info')
 @router.callback_query(F.data=='php_info')
 @router.callback_query(F.data=='html_info')
 @router.callback_query(F.data=='flutter_info')
 async def language_coding(callback:CallbackQuery):
     if callback.data=='python_info':
-        python=[]
+        python1=[]   
         await callback.message.answer('You can read information about Python')
         data= await client_info.python_info(callback)
+        print(callback.data)
         for i in data:
-            python.append(re.sub("[(),'']",'',str(i))) 
-        await callback.message.answer(text=f'{python}')
+            python1.append(re.sub("[(),'']",'',str(i)))
+            print(i) 
+        await callback.message.answer(text=f'{python1}')
 
         
         #await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=data['user_id']))
