@@ -54,7 +54,8 @@ async def input_name(message:Message, state:FSMContext):
 
 @router.message(Form.phone)
 async def input_phone(message:Message,state:FSMContext):
-    data=await state.update_data(phone=message.contact.phone_number)
+    phoneNumber = message.contact.phone_number if message.contact is not None else message.text
+    data=await state.update_data(phone=phoneNumber)
     print(data['user_id'],data['phone'])
     if data['phone']!=None:
         await bot.send_message(chat_id=message.from_user.id,text='Thanks',reply_markup=client_kb.contact_remove)

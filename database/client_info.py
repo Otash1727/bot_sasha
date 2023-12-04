@@ -7,23 +7,28 @@ from keyboard import admin_kb
 
 
 def sql_start():
-    global db,cur 
+    global db,cur, execute
     db=sq.connect("User_information.db")
     cur=db.cursor()
+    def execute(string: str):
+        try :
+             
+            return db.execute(string);
+        except  Exception as error:
+            print(error)
+            return None;
 
     if db:
         print('Data base connected OK!')
-    cur.execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info,about_us)""")
+    execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info,about_us)""")
     db.commit()
-    cur.execute("INSERT INTO info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info,about_us) VALUES(NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,Null,'python','htmlcss','php','flutter','about us')")
-    db.commit()
+   
 
 
 """ function languages info"""    
 async def python_info(callback):
     callback_id=''
-    cur.execute(f"SELECT '{callback.data}'
-    FROM info_users WHERE user_id={callback.from_user.id}")
+    execute(f"SELECT {callback.data} FROM info_users WHERE user_id={callback.from_user.id}")
     show_languages=cur.fetchall()
     return show_languages
                   
