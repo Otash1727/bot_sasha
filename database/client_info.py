@@ -13,30 +13,42 @@ def sql_start():
 
     if db:
         print('Data base connected OK!')
-    cur.execute(""" CREATE TABLE IF NOT EXISTS info_users(name,sur_name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback)""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info,about_us)""")
     db.commit()
-    cur.execute("INSERT INTO info_users(name,sur_name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback) VALUES(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL)")
+    cur.execute("INSERT INTO info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info,about_us) VALUES(NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,Null,'python','htmlcss','php','flutter','about us')")
     db.commit()
 
 
-""" Client info"""
-async def add_user_info(callback,state):
+""" function languages info"""    
+async def python_info(callback):
+    callback_id=''
+    cur.execute(f"SELECT '{callback.data}'
+    FROM info_users WHERE user_id={callback.from_user.id}")
+    show_languages=cur.fetchall()
+    return show_languages
+                  
+
+""" Client info"""  
+async def add_user_info(state):
+    python='python'
+    php='php'
+    html='html'
+    flutter='flutter'
+    about_us='About us'
     data= await state.get_data()
-    info=(data['name'],data['sur_name'],data['phone'],data['prg_languages'],data['user_id'])       
-    cur.execute("""INSERT INTO info_users(name,sur_name,phone,programming_languages,user_id) VALUES(?,?,?,?,?)""",info)
+    info=(data['name'],data['phone'],data['user_id'])       
+    cur.execute(f"INSERT INTO info_users(name,phone,user_id,python_info,html_info,php_info,flutter_info,about_us) VALUES(?,?,?,'{python}','{html}','{php}','{flutter}','{about_us}')",info)
     db.commit()
 
-async def show_user_id(message):
+async def show_user_id():
     cur.execute("SELECT user_id FROM info_users")
     check_id=cur.fetchall()
-    for i in check_id:
-        print(i)
-    if int(message.from_user.id) in i:
-        await message.answer('You have already registered from our bot ')
-        await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=message.from_user.id))
-    else:
-        await bot.set_my_commands([BotCommand(command='register',description='Register to use our bot')],BotCommandScopeChat(chat_id=message.from_user.id))
-        await message.answer('Register to use our bot')
+    return check_id
+
+"""python html php flutter info"""
+async def languages_info(message):
+    info_IT=['python','html','php','flutter',f'{message.from_user.id}']
+    cur.execute("INSERT INTO users_info(python_info,html_info,php_info_flutter_info) VALUES(?,?,?,?) WHERE user_id=?",info_IT)
 
 """General function"""
 async def show_userinfo():
@@ -44,10 +56,10 @@ async def show_userinfo():
     sh_i=cur.fetchall()
     return sh_i
 
-async def show_surname():
-    cur.execute('SELECT sur_name FROM info_users')
-    sh_s=cur.fetchall()
-    return sh_s
+async def show_about():
+    cur.execute("SELECT about_us FROM info_users WHERE user_id=1")
+    about=cur.fetchall()
+    return about
 
 """ PART MARKING THE ROLE PAYMETS,CASHBACK,PARTNERS """
 
