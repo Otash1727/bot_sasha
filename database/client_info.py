@@ -20,7 +20,9 @@ def sql_start():
 
     if db:
         print('Data base connected OK!')
-    execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info,about_us)""")
+    execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people)""")
+    db.commit()
+    execute("CREATE TABLE IF NOT EXISTS info_courses(python,htmlcss,php,flutter)")
     db.commit()
    
 

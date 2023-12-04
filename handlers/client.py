@@ -1,4 +1,5 @@
 from aiogram import Router ,F
+from aiogram.enums import ParseMode
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder,InlineKeyboardButton,KeyboardBuilder 
 from aiogram.utils.deep_linking import decode_payload,create_deep_link
 from aiogram.types import Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault,InlineQuery,InlineQueryResultArticle
@@ -35,11 +36,15 @@ async def cdm_start(message:Message,state:FSMContext):
         tg_id.append(re.sub("[(),'']",'',str(i)))
     if str(message.from_user.id) in str(tg_id):
         await message.answer('You have already registered from our bot \n Please select the commands to use the bot')
-        await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=message.from_user.id))
+        await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='accounting',description='your balance and cashback, monthly payments'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings'),BotCommand(command='cancel',description='cancel the current operation'),BotCommand(command='help',description='help')],BotCommandScopeChat(chat_id=message.from_user.id))
     else:
         await message.answer('Hi!. Welcome to the IT park of the bot\n Input your name',reply_markup=client_kb.start_up)
         await state.set_state(Form.name)
-        
+
+
+@router.message(Command('help'))
+async def command_help(message:Message):
+    await bot.send_message(chat_id=message.from_user.id, text="<i><b>The list of commands to use the bot for you</b></i> \n \n /start - <b>run the bot</b>\n \n /profile -<b> User's information</b>\n \n /accounting - <b>your balance and cashback,monthly paymets</b>\n \n /courses -<b> about list of our courses</b>\n \n /lesson - <b>your lessons and homeworks</b>\n \n /settings - <b>options of the bot</b> ",parse_mode=ParseMode.HTML)     
 
 @router.message(Form.name)
 async def input_name(message:Message, state:FSMContext):
@@ -68,10 +73,15 @@ async def input_phone(message:Message,state:FSMContext):
         #time.sleep(2);
         #await sendedMessage.delete();
         await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=message.from_user.id)) 
+        await bot.send_message(chat_id=message.from_user.id, text="<i><b>The list of commands to use the bot for you</b></i> \n \n /start - <b>run the bot</b>\n \n /profile -<b> User's information</b>\n \n /accounting - <b>your balance and cashback,monthly paymets</b>\n \n /courses -<b> about list of our courses</b>\n \n /lesson - <b>your lessons and homeworks</b>\n \n /settings - <b>options of the bot</b> ",parse_mode=ParseMode.HTML)
     else:
         await message.answer('You wrong to input your phone number \n For example: +998.........',reply_markup=client_kb.start_up)
+
+
+
 @router.callback_query(F.data=='skip')
-async def skip_command(callback:CallbackQuery):
+async def skip_command(callback:CallbackQuery,state:FSMContext):
+    await state.clear()
     await callback.message.answer('You can find out about us here',reply_markup=client_kb.about_us)
     await callback.message.delete_reply_markup()
 
