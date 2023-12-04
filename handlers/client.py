@@ -58,10 +58,14 @@ async def input_phone(message:Message,state:FSMContext):
     data=await state.update_data(phone=phoneNumber)
     print(data['user_id'],data['phone'])
     if data['phone']!=None:
-        await bot.send_message(chat_id=message.from_user.id,text='Thanks',reply_markup=client_kb.contact_remove)
+        sendedMessage =  await bot.send_message(chat_id=message.from_user.id,text='Thanks',reply_markup=client_kb.contact_remove)
         await client_info.add_user_info(state)
         await state.clear() 
-        await message.answer('You have registed \n Please select the commands to use the bot')
+        answeredMessage = await message.answer('You have registed \n Please select the commands to use the bot')
+        time.sleep(2);
+        await answeredMessage.delete();
+        time.sleep(2);
+        await sendedMessage.delete();
         await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=message.from_user.id)) 
 
 @router.callback_query(F.data=='skip')
