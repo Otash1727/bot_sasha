@@ -53,7 +53,6 @@ client_group=InlineKeyboardMarkup(
 start_up=InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text='Sign up',callback_data='signup'),
             InlineKeyboardButton(text='Skip >>',callback_data='skip')
         ]
     ]
