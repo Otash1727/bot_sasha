@@ -37,37 +37,39 @@ async def cdm_start(message:Message,state:FSMContext):
         await message.answer('You have already registered from our bot \n Please select the commands to use the bot')
         await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=message.from_user.id))
     else:
-        await message.answer('Hi!. Welcome to the IT park of the bot',reply_markup=client_kb.start_up)
-        #await message.answer('Hello you want to register our bot. Please input your name')
+        await message.answer('Hi!. Welcome to the IT park of the bot\n Input your name',reply_markup=client_kb.start_up)
+        await state.set_state(Form.name)
         
-@router.callback_query(F.data=='signup')
-async def startup (callback:CallbackQuery,state:FSMContext):
-    await state.set_state(Form.name)
-    await callback.message.answer('Input your name')
 
 @router.message(Form.name)
 async def input_name(message:Message, state:FSMContext):
     await state.update_data(name=message.text.lower())
     await state.update_data(user_id=message.from_user.id)
-    await message.answer(f"Okey now you need to send your phone number", reply_markup=client_kb.contact_markup)
+    await message.answer(text='Thanks',reply_markup=client_kb.contact_markup)
+    await message.answer(f"Okey now you need to send your phone number with button or write message \n For example: +998.........", reply_markup=client_kb.start_up)
     await state.set_state(Form.phone)
 
 @router.message(Form.phone)
 async def input_phone(message:Message,state:FSMContext):
-    phoneNumber = message.contact.phone_number if message.contact is not None else message.text
+    phoneNumber =[] #message.contact if message.contact is not None else  len(message.text)==13
+    if message.contact is not None:
+        phoneNumber=message.contact.phone_number
+    elif len(message.text)==13 and '+' in message.text:
+        phoneNumber=message.text
+    else:
+        print(0) 
     data=await state.update_data(phone=phoneNumber)
     print(data['user_id'],data['phone'])
-    if data['phone']!=None:
+    if data['phone']!=[]:
         sendedMessage =  await bot.send_message(chat_id=message.from_user.id,text='Thanks',reply_markup=client_kb.contact_remove)
         await client_info.add_user_info(state)
         await state.clear() 
         answeredMessage = await message.answer('You have registed \n Please select the commands to use the bot')
-        time.sleep(2);
-        await answeredMessage.delete();
-        time.sleep(2);
-        await sendedMessage.delete();
+        #time.sleep(2);
+        #await sendedMessage.delete();
         await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=message.from_user.id)) 
-
+    else:
+        await message.answer('You wrong to input your phone number \n For example: +998.........',reply_markup=client_kb.start_up)
 @router.callback_query(F.data=='skip')
 async def skip_command(callback:CallbackQuery):
     await callback.message.answer('You can find out about us here',reply_markup=client_kb.about_us)
