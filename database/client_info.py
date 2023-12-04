@@ -13,16 +13,17 @@ def sql_start():
 
     if db:
         print('Data base connected OK!')
-    cur.execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info)""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info,about_us)""")
     db.commit()
-    cur.execute("INSERT INTO info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info) VALUES(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'python','html','php','flutter')")
+    cur.execute("INSERT INTO info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people,cashback,python_info,html_info,php_info,flutter_info,about_us) VALUES(NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,Null,'python','htmlcss','php','flutter','about us')")
     db.commit()
 
 
 """ function languages info"""    
 async def python_info(callback):
     callback_id=''
-    cur.execute(f"SELECT {callback.data} FROM info_users WHERE user_id=?",callback.from_user.id,)
+    cur.execute(f"SELECT '{callback.data}'
+    FROM info_users WHERE user_id={callback.from_user.id}")
     show_languages=cur.fetchall()
     return show_languages
                   
@@ -33,9 +34,10 @@ async def add_user_info(state):
     php='php'
     html='html'
     flutter='flutter'
+    about_us='About us'
     data= await state.get_data()
     info=(data['name'],data['phone'],data['user_id'])       
-    cur.execute(f"INSERT INTO info_users(name,phone,user_id,python_info,html_info,php_info,flutter_info) VALUES(?,?,?,'{python}','{html}','{php}','{flutter}')",info)
+    cur.execute(f"INSERT INTO info_users(name,phone,user_id,python_info,html_info,php_info,flutter_info,about_us) VALUES(?,?,?,'{python}','{html}','{php}','{flutter}','{about_us}')",info)
     db.commit()
 
 async def show_user_id():
@@ -54,10 +56,10 @@ async def show_userinfo():
     sh_i=cur.fetchall()
     return sh_i
 
-async def show_surname():
-    cur.execute('SELECT sur_name FROM info_users')
-    sh_s=cur.fetchall()
-    return sh_s
+async def show_about():
+    cur.execute("SELECT about_us FROM info_users WHERE user_id=1")
+    about=cur.fetchall()
+    return about
 
 """ PART MARKING THE ROLE PAYMETS,CASHBACK,PARTNERS """
 
