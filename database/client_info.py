@@ -22,35 +22,33 @@ def sql_start():
         print('Data base connected OK!')
     execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id,role,extra_role,payments,invite_people)""")
     db.commit()
-    execute("CREATE TABLE IF NOT EXISTS info_courses(python,htmlcss,php,flutter)")
+    execute("CREATE TABLE IF NOT EXISTS info_courses(python_info,htmlcss_info,php_info,flutter,about_us)")
+    #execute("INSERT INTO info_courses(php_info) VALUES('GGG')")
     db.commit()
    
 
 
 """ function languages info"""    
-async def python_info(callback):
-    callback_id=''
-    execute(f"SELECT {callback.data} FROM info_users WHERE user_id={callback.from_user.id}")
-    show_languages=cur.fetchall()
-    return show_languages
+
                   
 
 """ Client info"""  
 async def add_user_info(state):
-    python='python'
-    php='php'
-    html='html'
-    flutter='flutter'
-    about_us='About us'
     data= await state.get_data()
     info=(data['name'],data['phone'],data['user_id'])       
-    cur.execute(f"INSERT INTO info_users(name,phone,user_id,python_info,html_info,php_info,flutter_info,about_us) VALUES(?,?,?,'{python}','{html}','{php}','{flutter}','{about_us}')",info)
+    cur.execute(f"INSERT INTO info_users(name,phone,user_id) VALUES(?,?,?)",info)
     db.commit()
 
 async def show_user_id():
     cur.execute("SELECT user_id FROM info_users")
     check_id=cur.fetchall()
     return check_id
+
+async def profile_funtions(message):
+    msg_id=[message.from_user.id,]
+    cur.execute('SELECT * FROM info_users WHERE user_id=?',msg_id,)
+    profile=cur.fetchall()
+    return profile
 
 """python html php flutter info"""
 async def languages_info(message):
