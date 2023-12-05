@@ -124,6 +124,10 @@ async def language_coding(callback:CallbackQuery):
             print(i) 
         await callback.message.answer(text=f'{python1}')
 
+@router.message()
+async def empty_handler(message:Message):
+    await message.answer('I don\'t understand you')
+
         
         #await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=data['user_id']))
  #       await client_info.add_user_info(callback,state)
