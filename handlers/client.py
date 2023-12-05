@@ -54,29 +54,25 @@ async def input_name(message:Message, state:FSMContext):
     await message.answer(f"Okey now you need to send your phone number with button or write message \n For example: +998.........", reply_markup=client_kb.start_up)
     await state.set_state(Form.phone)
 
+def textToPhoneValidate(message: Message):
+    return message.contact is not None or (message.text.startswith('+') and len(message.text) ==13);
+
 @router.message(Form.phone)
 async def input_phone(message:Message,state:FSMContext):
-    phoneNumber =[] #message.contact if message.contact is not None else  len(message.text)==13
-    if message.contact is not None:
-        phoneNumber=message.contact.phone_number
-    elif len(message.text)==13 and '+' in message.text:
-        phoneNumber=message.text
-    else:
-        print(0) 
-    data=await state.update_data(phone=phoneNumber)
+    if not textToPhoneValidate(message):
+        return await message.answer('You wrong to input your phone number \n For example: +998.........',reply_markup=client_kb.start_up)
+    phoneNumber = message.contact.phone_number if message.contact is not None else message.text
+    data = await state.update_data(phone=phoneNumber)
     print(data['user_id'],data['phone'])
-    if data['phone']!=[]:
-        sendedMessage =  await bot.send_message(chat_id=message.from_user.id,text='Thanks',reply_markup=client_kb.contact_remove)
-        await client_info.add_user_info(state)
-        await state.clear() 
-        answeredMessage = await message.answer('You have registed \n Please select the commands to use the bot')
-        #time.sleep(2);
-        #await sendedMessage.delete();
-        await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='accounting',description='your balance and cashback, monthly payments'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings'),BotCommand(command='cancel',description='cancel the current operation'),BotCommand(command='help',description='help')],BotCommandScopeChat(chat_id=message.from_user.id))
-        await bot.send_message(chat_id=message.from_user.id, text="<i><b>The list of commands to use the bot for you</b></i> \n \n /start - <b>run the bot</b>\n \n /profile -<b> User's information</b>\n \n /accounting - <b>your balance and cashback,monthly paymets</b>\n \n /courses -<b> about list of our courses</b>\n \n /lesson - <b>your lessons and homeworks</b>\n \n /settings - <b>options of the bot</b> ",parse_mode=ParseMode.HTML)
-    else:
-        await message.answer('You wrong to input your phone number \n For example: +998.........',reply_markup=client_kb.start_up)
-
+    sendedMessage =  await bot.send_message(chat_id=message.from_user.id,text='Thanks',reply_markup=client_kb.contact_remove)
+    await client_info.add_user_info(state)
+    await state.clear() 
+    answeredMessage = await message.answer('You have registed \n Please select the commands to use the bot')
+    #time.sleep(2);
+    #await sendedMessage.delete();
+    await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='accounting',description='your balance and cashback, monthly payments'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings'),BotCommand(command='cancel',description='cancel the current operation'),BotCommand(command='help',description='help')],BotCommandScopeChat(chat_id=message.from_user.id))
+    await bot.send_message(chat_id=message.from_user.id, text="<i><b>The list of commands to use the bot for you</b></i> \n \n /start - <b>run the bot</b>\n \n /profile -<b> User's information</b>\n \n /accounting - <b>your balance and cashback,monthly paymets</b>\n \n /courses -<b> about list of our courses</b>\n \n /lesson - <b>your lessons and homeworks</b>\n \n /settings - <b>options of the bot</b> ",parse_mode=ParseMode.HTML)
+   
 """SKIP FUNCTATION  """
 
 @router.callback_query(F.data=='skip')
@@ -99,10 +95,12 @@ async def about_command(callback:CallbackQuery):
     for i in data:
         about_info.append(re.sub("[(),'']",'',str(i)))
     print(about_info)
-    if about_info!=[]:
-        await bot.send_message(chat_id=callback.from_user.id,text=f"{about_info}",reply_markup=cancel.as_markup())
+    if len(about_info) != 0:
+        await callback.message.edit_text(text=f"{about_info}",reply_markup=cancel.as_markup());
+        # await callback.message.edit_reply_markup()
     else:
-        await bot.send_message(chat_id=callback.from_user.id,text="Not found informations")
+        await callback.message.edit_text(text="Not found informations");
+        # await bot.send_message(chat_id=callback.from_user.id,text="Not found informations")
     #await callback.message.delete_reply_markup()
 
 @router.callback_query(F.data=='back1')
