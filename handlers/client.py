@@ -208,6 +208,7 @@ async def profile_command(message:Message):
         print(i)
     await message.answer(f"<b>Full name - <i>{i[0].upper()}</i>\nPhone number - <i>{i[1]}</i>\nActive cources - <i>{i[2]}</i>\nRole - <i>{i[4]}</i>\nExtra role - <i>{i[5]}</i>\nMonthly payment - <i>{i[6]}</i>\nInvite people - <i>{i[7]}</i>  </b>",parse_mode=ParseMode.HTML)
 
+
 @router.message(Command('courses'))
 async def show2_courses(message:Message):
     await message.answer ('List of courses we have available',reply_markup=client_kb.client_group)
