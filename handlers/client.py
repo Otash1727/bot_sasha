@@ -126,19 +126,17 @@ async def about_courses(callback:CallbackQuery):
 
 
 
-@router.callback_query(F.data=='python_info')
-@router.callback_query(F.data=='php_info')
-@router.callback_query(F.data=='htmlcss_info')
-@router.callback_query(F.data=='flutter_info')
+@router.callback_query(F.data.startswith('course'))
 async def language_coding(callback:CallbackQuery):
+    print(callback.data.split(':'));
     cancel2=InlineKeyboardBuilder()
     cancel2.add(InlineKeyboardButton(text='back',callback_data='back4'))
-    data1= await languages_info.show_courses(callback)
-    if  len(data1)==0 and (callback.data=='python_info'or callback.data=='php_info' or callback.data=='htmlcss_info'or callback.data=='flutter_info'):
-        return  await callback.message.answer('Not found information',reply_markup=cancel2.as_markup())
-    for i in data1:
-        (re.sub("[,()'']",'',str(i)))
-    await callback.message.answer(text=f"{data1}",reply_markup=cancel2.as_markup())
+    # data1= await languages_info.show_courses(callback)
+    # if  len(data1)==0 and (callback.data=='python_info'or callback.data=='php_info' or callback.data=='htmlcss_info'or callback.data=='flutter_info'):
+    #     return  await callback.message.answer('Not found information',reply_markup=cancel2.as_markup())
+    # for i in data1:
+    #     (re.sub("[,()'']",'',str(i)))
+    # await callback.message.answer(text=f"{data1}",reply_markup=cancel2.as_markup())
 
     #        python1.append(re.sub("[(),'']",'',str(i)))
     #await callback.message.answer(text=f'1',reply_markup=cancel2.as_markup())
@@ -211,7 +209,17 @@ async def profile_command(message:Message):
 
 @router.message(Command('courses'))
 async def show2_courses(message:Message):
-    await message.answer ('List of courses we have available',reply_markup=client_kb.client_group)
+    courses = [
+        {'id': 1, "name": "python"}, 
+        {'id': 2, "name": "html css"}, 
+        {'id': 3, "name": "php"}, 
+        {'id': 4, "name": "flutter"}, 
+    ]
+    markup = InlineKeyboardBuilder();
+    for course in courses:
+        markup.row(InlineKeyboardButton(text=course['name'], callback_data=f"course:{course['id']}"))
+    markup.row(InlineKeyboardButton(text="back", callback_data='back'))
+    await message.answer ('List of courses we have available',reply_markup=markup.as_markup())
 
 
 

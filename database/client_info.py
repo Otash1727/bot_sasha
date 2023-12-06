@@ -20,10 +20,12 @@ def sql_start():
 
     if db:
         print('Data base connected OK!')
-    execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id INT,role,extra_role,payments,invite_people)""")
+    execute("""CREATE TABLE IF NOT EXISTS info_users(id int not null auto_increment, name,phone,programming_languages,user_id INT,role,extra_role,payments,invite_people)""")
     #execute("INSERT INTO info_users(user_id) VALUES(1)")
     db.commit()
-    execute("CREATE TABLE IF NOT EXISTS info_courses(python_info,htmlcss_info,php_info,flutter_info,about_us)")
+    execute("CREATE TABLE IF NOT EXISTS info_courses(id,name,slug,description,images)")
+    execute("CREATE TABLE IF NOT EXISTS groups(id,course_id)")
+    execute("CREATE TABLE IF NOT EXISTS group_participant(group_id,user_id,role)")
     #execute("INSERT INTO info_courses(python_info) VALUES('GGG')")
     db.commit()
    
