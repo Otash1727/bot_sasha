@@ -2,7 +2,7 @@ from aiogram import Router ,F
 from aiogram.enums import ParseMode
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder,InlineKeyboardButton,KeyboardBuilder 
 from aiogram.utils.deep_linking import decode_payload,create_deep_link
-from aiogram.types import Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault,InlineQuery,InlineQueryResultArticle
+from aiogram.types import Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault,InlineQuery,InlineQueryResultArticle, InputTextMessageContent
 from aiogram.methods.delete_my_commands import DeleteMyCommands
 from aiogram.utils.formatting import Text, Bold
 from aiogram.filters import Command, CommandStart, Filter
@@ -179,9 +179,25 @@ async def language_coding(callback:CallbackQuery):
 async def empty_handler(message:Message):
     await message.answer("I don't understand you")
 
+@router.inline_query()
+async def inlineHandler(query: InlineQuery):
+    print(query.query, query.chat_type)
+    results=[InlineQueryResultArticle(description="pythonni urgan", title="python", id='1', input_message_content= InputTextMessageContent(message_text="python \n pythonni urgan", ))]
+      
+      
+    # user = User() #query.from_user.id
+    # if user.isAdmin():
+
+    #     results.append(InlineQueryResultArticle(description="pythonni urgan", title="python", id='1', input_message_content= InputTextMessageContent(message_text="python \n pythonni urgan", )));
+    
+    # if user.isTeacher():
+    #     pass
+    await query.answer(results=results)
 
 
 
+class User:
+    pass
 
     
 
