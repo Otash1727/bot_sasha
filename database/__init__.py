@@ -1,1 +1,1 @@
-from database import client_info,languages_info
+from database import client_info,courses_info

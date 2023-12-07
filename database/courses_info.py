@@ -17,8 +17,8 @@ def sql_start():
 
 """General functation"""
 
-async def show_courses(callback):
-    client_info.cur.execute(f"SELECT {callback.data} FROM info_courses")
+async def show_courses():
+    client_info.cur.execute(f"SELECT * FROM info_courses")
     show_languages=client_info.cur.fetchall()
     return show_languages
 

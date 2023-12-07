@@ -10,7 +10,7 @@ from aiogram.enums.content_type import ContentType
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from keyboard import client_kb
-from database import client_info,languages_info
+from database import client_info,courses_info
 import logging
 import time
 from create_bot import bot 
@@ -92,7 +92,7 @@ async def about_command(callback:CallbackQuery):
     cancel=InlineKeyboardBuilder()
     cancel.add(InlineKeyboardButton(text='back',callback_data='back1'))
     about_info=[]
-    data=await languages_info.show_courses(callback=callback)
+    data=await courses_info.show_courses(callback=callback)
     for i in data:
         about_info.append(re.sub("[(),'']",'',str(i)))
     print(about_info)
@@ -126,11 +126,7 @@ async def about_courses(callback:CallbackQuery):
 
 
 
-@router.callback_query(F.data.startswith('course'))
-async def language_coding(callback:CallbackQuery):
-    print(callback.data.split(':'));
-    cancel2=InlineKeyboardBuilder()
-    cancel2.add(InlineKeyboardButton(text='back',callback_data='back4'))
+
     # data1= await languages_info.show_courses(callback)
     # if  len(data1)==0 and (callback.data=='python_info'or callback.data=='php_info' or callback.data=='htmlcss_info'or callback.data=='flutter_info'):
     #     return  await callback.message.answer('Not found information',reply_markup=cancel2.as_markup())
@@ -209,18 +205,21 @@ async def profile_command(message:Message):
 
 @router.message(Command('courses'))
 async def show2_courses(message:Message):
-    courses = [
-        {'id': 1, "name": "python"}, 
-        {'id': 2, "name": "html css"}, 
-        {'id': 3, "name": "php"}, 
-        {'id': 4, "name": "flutter"}, 
-    ]
-    markup = InlineKeyboardBuilder();
+    courses=await courses_info.show_courses()
+    markup = InlineKeyboardBuilder()
     for course in courses:
-        markup.row(InlineKeyboardButton(text=course['name'], callback_data=f"course:{course['id']}"))
+        markup.row(InlineKeyboardButton(text=f"{course[1]}", callback_data=f"course:{course[1]}:{course[2]}:{course[3]}"))
     markup.row(InlineKeyboardButton(text="back", callback_data='back'))
     await message.answer ('List of courses we have available',reply_markup=markup.as_markup())
 
+@router.callback_query(F.data.startswith('course'))
+async def language_coding(callback:CallbackQuery):
+    #await callback.message.edit_text(callback.data.split(":"))
+    dataes=callback.data.split(':')
+    print(dataes)
+    await callback.message.answer(f"<i><b>{dataes[0].upper()}:{dataes[1].upper()}</b></i>\n<b>{dataes[2]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML)
+    cancel2=InlineKeyboardBuilder()
+    cancel2.add(InlineKeyboardButton(text='back',callback_data='back4'))
 
 
         #await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=data['user_id']))
