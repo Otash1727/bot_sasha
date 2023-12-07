@@ -169,9 +169,10 @@ async def language_coding(callback:CallbackQuery):
     #await callback.message.edit_text(callback.data.split(":"))
     dataes=callback.data.split(':')
     print(dataes)
-    await callback.message.answer(f"<i><b>{dataes[0].upper()}:{dataes[1].upper()}</b></i>\n<b>{dataes[2]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML)
-    cancel2=InlineKeyboardBuilder()
-    cancel2.add(InlineKeyboardButton(text='back',callback_data='back4'))
+    cancel=InlineKeyboardBuilder()
+    cancel.add(InlineKeyboardButton(text='back',callback_data='back4'))
+    await callback.message.edit_text(f"<i><b>{dataes[0].upper()}:{dataes[1].upper()}</b></i>\n<b>{dataes[2]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML, reply_markup=cancel.as_markup())
+    
      
 """Empty handler"""
 @router.message()
