@@ -40,7 +40,7 @@ client_group=InlineKeyboardMarkup(
             InlineKeyboardButton(text='Php',callback_data='php_info')
         ],
         [
-            InlineKeyboardButton(text='Html Css', callback_data='html_info'),
+            InlineKeyboardButton(text='Html Css', callback_data='htmlcss_info'),
             InlineKeyboardButton(text='Flutter', callback_data='flutter_info')
         ],
         [
@@ -60,7 +60,7 @@ start_up=InlineKeyboardMarkup(
 about_us=InlineKeyboardMarkup(
     inline_keyboard=[
         [
-        InlineKeyboardButton(text='About us',callback_data='aboutus'),
+        InlineKeyboardButton(text='About us',callback_data='about_us'),
         InlineKeyboardButton(text='Our courses',callback_data='ourcourses')
         ],
         [
@@ -68,3 +68,20 @@ about_us=InlineKeyboardMarkup(
         ]
     ]
 )
+
+
+client_group2=InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Python',callback_data='python_info'),
+            InlineKeyboardButton(text='Php',callback_data='php_info')
+        ],
+        [
+            InlineKeyboardButton(text='Html Css', callback_data='htmlcss_info'),
+            InlineKeyboardButton(text='Flutter', callback_data='flutter_info')
+        ],
+        [
+            InlineKeyboardButton(text='back3',callback_data='back3')
+        ]
+    ]
+)  
