@@ -104,6 +104,30 @@ async def about_command(callback:CallbackQuery):
         # await bot.send_message(chat_id=callback.from_user.id,text="Not found informations")
     #await callback.message.delete_reply_markup()
 
+
+    #await callback.message.delete_reply_markup()
+
+@router.callback_query(F.data=='ourcourses')
+async def about_courses(callback:CallbackQuery):
+    await callback.message.edit_text('List of courses we have available',reply_markup=client_kb.client_group) 
+
+
+
+"""BUTTON back"""
+   
+@router.callback_query(F.data=='back2')
+async def back_2(callback:CallbackQuery):
+    await callback.message.answer('You can find out about us here',reply_markup=client_kb.about_us)
+@router.callback_query(F.data=='back4')
+async def back_4(callback:CallbackQuery):
+    data=await client_info.show_user_id()
+    if len(data)==0: 
+        return await callback.message.edit_text('You can find out about us here',reply_markup=client_kb.about_us)
+    for i in data:
+        i
+    if callback.from_user.id in i:
+        await callback.message.edit_text('List of courses we have available',reply_markup=client_kb.client_group) 
+
 @router.callback_query(F.data=='back1')
 async def back1(callback:CallbackQuery):
     await callback.message.edit_text('You can find out about us here',reply_markup=client_kb.about_us)
@@ -118,83 +142,11 @@ async def back1(callback:CallbackQuery):
     if callback.from_user.id in i:
         await callback.message.edit_text(text="<i><b>The list of commands to use the bot for you</b></i> \n \n /start - <b>run the bot</b>\n \n /profile -<b> User's information</b>\n \n /accounting - <b>your balance and cashback,monthly paymets</b>\n \n /courses -<b> about list of our courses</b>\n \n /lesson - <b>your lessons and homeworks</b>\n \n /settings - <b>options of the bot</b> ",parse_mode=ParseMode.HTML)
     
-    #await callback.message.delete_reply_markup()
-
-@router.callback_query(F.data=='ourcourses')
-async def about_courses(callback:CallbackQuery):
-    await callback.message.edit_text('List of courses we have available',reply_markup=client_kb.client_group) 
-
-
-
-
-    # data1= await languages_info.show_courses(callback)
-    # if  len(data1)==0 and (callback.data=='python_info'or callback.data=='php_info' or callback.data=='htmlcss_info'or callback.data=='flutter_info'):
-    #     return  await callback.message.answer('Not found information',reply_markup=cancel2.as_markup())
-    # for i in data1:
-    #     (re.sub("[,()'']",'',str(i)))
-    # await callback.message.answer(text=f"{data1}",reply_markup=cancel2.as_markup())
-
-    #        python1.append(re.sub("[(),'']",'',str(i)))
-    #await callback.message.answer(text=f'1',reply_markup=cancel2.as_markup())
-    #if callback.data=='python_info':
-    #    python1=[]   
-    #    await callback.message.answer('You can read information about Python')
-    #    data= await languages_info.show_courses(callback=callback)
-    #    print(callback.data)
-    #    for i in data:
-    #        python1.append(re.sub("[(),'']",'',str(i)))
-    #    if python1!=[]: 
-    #        await callback.message.answer(text=f'{python1}',reply_markup=cancel2.as_markup())
-    #    else:
-    #        await callback.message.answer('Not found information',reply_markup=cancel2.as_markup())
-    #if callback.data=='php_info':
-    #    php1=[]
-    #    await callback.message.answer('You can read information about Python')
-    #    data= await languages_info.show_courses(callback=callback)
-    #    print(callback.data)
-    #    for i in data:
-    #        php1.append(i)
-    #    if php1!=[]: 
-    #        await callback.message.answer(text=f"{re.sub('[(),'']','',str(php1))}",reply_markup=cancel2.as_markup())
-    #    else:
-    #        await callback.message.answer('Not found information,reply_markup=cancel2.as_markup()')
-    #if callback.data=='htmlcss_info':
-    #    htmcss1=[]
-    #    await callback.message.answer('You can read information about Python')
-    #    data= await languages_info.show_courses(callback=callback)
-    #    for i in data:
-    #        htmcss1.append(i)
-    #    if htmcss1!=[]: 
-    #        await callback.message.answer(text=f'{htmcss1}',reply_markup=cancel2.as_markup())
-    #    else:
-    #        await callback.message.answer('Not found information',reply_markup=cancel2.as_markup())
-    #if callback.data=='flutter_info':
-    #    flutter1=[]
-    #    await callback.message.answer('You can read information about Python')
-    #    data= await languages_info.show_courses(callback=callback)
-    #    print(callback.data)
-    #    for i in data:
-    #        htmcss1.append(re.sub("[(),'',[]]",'',str(i)))
-    #    if htmcss1!=[]: 
-    #        await callback.message.answer(text=f'{htmcss1}',reply_markup=cancel2.as_markup())
-    #    else:
-    #        await callback.message.answer('Not found information',reply_markup=cancel2.as_markup())
-@router.callback_query(F.data=='back2')
-async def back_2(callback:CallbackQuery):
-    await callback.message.answer('You can find out about us here',reply_markup=client_kb.about_us)
-@router.callback_query(F.data=='back4')
-async def back_4(callback:CallbackQuery):
-    data=await client_info.show_user_id()
-    if len(data)==0: 
-        return await callback.message.edit_text('You can find out about us here',reply_markup=client_kb.about_us)
-    for i in data:
-        i
-    if callback.from_user.id in i:
-        await callback.message.edit_text('List of courses we have available',reply_markup=client_kb.client_group) 
 
 
 """Commands functions"""
 
+"""Profile"""
 @router.message(Command('profile'))
 async def profile_command(message:Message):
     data=await client_info.profile_funtions(message=message)
@@ -202,7 +154,7 @@ async def profile_command(message:Message):
         print(i)
     await message.answer(f"<b>Full name - <i>{i[0].upper()}</i>\nPhone number - <i>{i[1]}</i>\nActive cources - <i>{i[2]}</i>\nRole - <i>{i[4]}</i>\nExtra role - <i>{i[5]}</i>\nMonthly payment - <i>{i[6]}</i>\nInvite people - <i>{i[7]}</i>  </b>",parse_mode=ParseMode.HTML)
 
-
+"""courses"""
 @router.message(Command('courses'))
 async def show2_courses(message:Message):
     courses=await courses_info.show_courses()
@@ -220,30 +172,7 @@ async def language_coding(callback:CallbackQuery):
     await callback.message.answer(f"<i><b>{dataes[0].upper()}:{dataes[1].upper()}</b></i>\n<b>{dataes[2]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML)
     cancel2=InlineKeyboardBuilder()
     cancel2.add(InlineKeyboardButton(text='back',callback_data='back4'))
-
-
-        #await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=data['user_id']))
- #       await client_info.add_user_info(callback,state)
-#        await state.clear()       
-#    if callback.data=='php':
-#        data= await state.update_data(prg_languages='php')
-#        await state.set_state(Form.user_id)
-#        await callback.answer('You have registed',show_alert=True)
-#        await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=data['user_id']))  
-#        await client_info.add_user_info(callback,state)
-#        await state.clear()
-#    if callback.data=='htmlcss':
-#        data=await state.update_data(prg_languages='htmlcss')
-#        await state.set_state(Form.user_id)
-#        await callback.answer('You have registed',show_alert=True)
-#        await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='status',description='your monthly payments and cashback'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings')],BotCommandScopeChat(chat_id=data['user_id']))  
-#        await client_info.add_user_info(callback,state)
-#        await state.clear()
-#    await callback.message.delete_reply_markup()
-#
-#
-
-
+     
 """Empty handler"""
 @router.message()
 async def empty_handler(message:Message):
