@@ -167,32 +167,12 @@ async def show2_courses(message:Message):
 @router.callback_query(F.data.startswith('course'))
 async def language_coding(callback:CallbackQuery):
     #await callback.message.edit_text(callback.data.split(":"))
+    dataes=callback.data.split(':')
+    print(dataes)
+    await callback.message.answer(f"<i><b>{dataes[0].upper()}:{dataes[1].upper()}</b></i>\n<b>{dataes[2]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML)
     cancel2=InlineKeyboardBuilder()
     cancel2.add(InlineKeyboardButton(text='back',callback_data='back4'))
-    data= await courses_info.findById(callback)
-    for dataes in data:
-        await callback.message.answer(f"<i><b>{dataes[1].upper()}:{dataes[2].upper()}</b></i>\n<b>{dataes[3]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML,reply_markup=cancel2.as_markup())
-
-        
-@router.inline_query()
-async def inlineHandler(query: InlineQuery):
-    print(query.query, query.chat_type,query.location)
-    switch_keyboard=InlineKeyboardBuilder()
-    switch_keyboard.add(InlineKeyboardButton(text='ff',switch_inline_query='123'))
-    data= await courses_info.show_courses()
-    results=[InlineQueryResultArticle(description=f"{dataes[2]}", title=f"{dataes[1].upper()}", id=f'{dataes[0]}', input_message_content= InputTextMessageContent(message_text=f"<b>{dataes[1]}\n{dataes[2]}\n{dataes[3]}</b>",parse_mode=ParseMode.HTML ))for dataes in data]
-    await query.answer(results=results,cache_time=60,is_personal=True)
-
-@router.chosen_inline_result()
-async def ff(results:ChosenInlineResult):
-    await results.answer("Пример Редактирования", inline_message_id=result.inline_message_id )
-
-
-
-
-"""INLINE_MODE GENERAL"""
-
-
+     
 """Empty handler"""
 #@router.message()
 #async def empty_handler(message:Message):
