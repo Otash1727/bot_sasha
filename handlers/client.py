@@ -1,8 +1,8 @@
 from aiogram import Router ,F
 from aiogram.enums import ParseMode
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder,InlineKeyboardButton,KeyboardBuilder 
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder,InlineKeyboardButton,KeyboardBuilder,InlineKeyboardMarkup 
 from aiogram.utils.deep_linking import decode_payload,create_deep_link
-from aiogram.types import Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault,InlineQuery,InlineQueryResultArticle
+from aiogram.types import Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault,InlineQuery,InlineQueryResultArticle,InputTextMessageContent,ChosenInlineResult
 from aiogram.methods.delete_my_commands import DeleteMyCommands
 from aiogram.utils.formatting import Text, Bold
 from aiogram.filters import Command, CommandStart, Filter
@@ -15,6 +15,7 @@ import logging
 import time
 from create_bot import bot 
 import re
+import uuid
 
 
 router=Router()
@@ -151,8 +152,7 @@ async def back1(callback:CallbackQuery):
 async def profile_command(message:Message):
     data=await client_info.profile_funtions(message=message)
     for i in data:
-        print(i)
-    await message.answer(f"<b>Full name - <i>{i[0].upper()}</i>\nPhone number - <i>{i[1]}</i>\nActive cources - <i>{i[2]}</i>\nRole - <i>{i[4]}</i>\nExtra role - <i>{i[5]}</i>\nMonthly payment - <i>{i[6]}</i>\nInvite people - <i>{i[7]}</i>  </b>",parse_mode=ParseMode.HTML)
+        await message.answer(f"<b>Full name - <i>{i[0].upper()}</i>\nPhone number - <i>{i[1]}</i>\nActive cources - <i>{i[2]}</i>\nRole - <i>{i[4]}</i>\nExtra role - <i>{i[5]}</i>\nMonthly payment - <i>{i[6]}</i>\nInvite people - <i>{i[7]}</i>  </b>",parse_mode=ParseMode.HTML)
 
 """courses"""
 @router.message(Command('courses'))
@@ -160,24 +160,44 @@ async def show2_courses(message:Message):
     courses=await courses_info.show_courses()
     markup = InlineKeyboardBuilder()
     for course in courses:
-        markup.row(InlineKeyboardButton(text=f"{course[1]}", callback_data=f"course:{course[1]}:{course[2]}:{course[3]}"))
+        markup.row(InlineKeyboardButton(text=f"{course[1]}", callback_data=f"course:{course[0]}"))
     markup.row(InlineKeyboardButton(text="back", callback_data='back'))
     await message.answer ('List of courses we have available',reply_markup=markup.as_markup())
 
 @router.callback_query(F.data.startswith('course'))
 async def language_coding(callback:CallbackQuery):
     #await callback.message.edit_text(callback.data.split(":"))
-    dataes=callback.data.split(':')
-    print(dataes)
-    await callback.message.answer(f"<i><b>{dataes[0].upper()}:{dataes[1].upper()}</b></i>\n<b>{dataes[2]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML)
     cancel2=InlineKeyboardBuilder()
     cancel2.add(InlineKeyboardButton(text='back',callback_data='back4'))
-     
-"""Empty handler"""
-@router.message()
-async def empty_handler(message:Message):
-    await message.answer("I don't understand you")
+    data= await courses_info.findById(callback)
+    for dataes in data:
+        await callback.message.answer(f"<i><b>{dataes[1].upper()}:{dataes[2].upper()}</b></i>\n<b>{dataes[3]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML,reply_markup=cancel2.as_markup())
 
+        
+@router.inline_query()
+async def inlineHandler(query: InlineQuery):
+    print(query.query, query.chat_type,query.location)
+    switch_keyboard=InlineKeyboardBuilder()
+    switch_keyboard.add(InlineKeyboardButton(text='ff',switch_inline_query='123'))
+    data= await courses_info.show_courses()
+    results=[InlineQueryResultArticle(description=f"{dataes[2]}", title=f"{dataes[1].upper()}", id=f'{dataes[0]}', input_message_content= InputTextMessageContent(message_text=f"<b>{dataes[1]}\n{dataes[2]}\n{dataes[3]}</b>",parse_mode=ParseMode.HTML ))for dataes in data]
+    await query.answer(results=results,cache_time=60,is_personal=True)
+
+@router.chosen_inline_result()
+async def ff(results:ChosenInlineResult):
+    await results.answer("Пример Редактирования", inline_message_id=result.inline_message_id )
+
+
+
+
+"""INLINE_MODE GENERAL"""
+
+
+"""Empty handler"""
+#@router.message()
+#async def empty_handler(message:Message):
+#    await message.answer("I don't understand you")
+    
 
 
 
