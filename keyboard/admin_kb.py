@@ -8,11 +8,12 @@ from aiogram.types import (ReplyKeyboardMarkup,ReplyKeyboardRemove,KeyboardButto
         /group
         /settings        
 """
+# is_active bool 0
 
 admin_window_kb=InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text=' 🔍 Search in all catigories', callback_data='find')]
+            InlineKeyboardButton(text=' 🔍 Search in all catigories', switch_inline_query_current_chat='python')]
             ,
         [
             InlineKeyboardButton(text='Add informations ',callback_data='schoolinfo'),
