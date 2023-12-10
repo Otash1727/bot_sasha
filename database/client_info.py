@@ -23,15 +23,14 @@ def sql_start():
     execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id INT,role,extra_role,payments,invite_people)""")
     #execute("INSERT INTO info_users(user_id) VALUES(1)")
     db.commit()
-    execute("CREATE TABLE IF NOT EXISTS info_courses(id int IDENTITY(1,1) PRIMARY KEY,name,description,images)")
+    execute("CREATE TABLE IF NOT EXISTS info_courses(id int IDENTITY(1,1) PRIMARY KEY,name,description,url ,price)")
     execute("CREATE TABLE IF NOT EXISTS groups(id,course_id)")
     execute("CREATE TABLE IF NOT EXISTS group_participant(group_id,user_id,role)")
     #execute("INSERT INTO info_courses(python_info) VALUES('GGG')")
     db.commit()
    
 
-
-""" function languages info"""    
+  
 
                   
 
@@ -47,16 +46,23 @@ async def show_user_id():
     check_id=cur.fetchall()
     return check_id
 
+
+"""Command profile function"""
+
 async def profile_funtions(message):
     msg_id=[message.from_user.id,]
     cur.execute('SELECT * FROM info_users WHERE user_id=?',msg_id,)
     profile=cur.fetchall()
     return profile
 
-"""python html php flutter info"""
-async def languages_info(message):
-    info_IT=['python','html','php','flutter',f'{message.from_user.id}']
-    cur.execute("INSERT INTO users_info(python_info,html_info,php_info_flutter_info) VALUES(?,?,?,?) WHERE user_id=?",info_IT)
+async def profile_query(query):
+    data=[query.from_user.id,]
+    cur.execute("SELECT * FROM info_users WHERE user_id=?",data,)
+    profile=cur.fetchall()
+    return profile
+
+
+
 
 """General function"""
 async def show_userinfo():
@@ -64,10 +70,6 @@ async def show_userinfo():
     sh_i=cur.fetchall()
     return sh_i
 
-async def show_about():
-    cur.execute("SELECT about_us FROM info_users WHERE user_id=1")
-    about=cur.fetchall()
-    return about
 
 """ PART MARKING THE ROLE PAYMETS,CASHBACK,PARTNERS """
 

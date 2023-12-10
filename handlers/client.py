@@ -11,11 +11,14 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from keyboard import client_kb
 from database import client_info,courses_info
+from handlers.inline_query import client_query
+from create_bot import bot, dp
 import logging
 import time
 from create_bot import bot 
 import re
-import uuid
+
+
 
 
 router=Router()
@@ -32,6 +35,7 @@ class Form(StatesGroup):
 @router.message(Command('start'))
 async def cdm_start(message:Message,state:FSMContext):
     tg_id=[]
+    print()
     data= await client_info.show_user_id()
     for i in data:
         tg_id.append(re.sub("[(),'']",'',str(i)))
@@ -154,25 +158,31 @@ async def profile_command(message:Message):
     for i in data:
         await message.answer(f"<b>Full name - <i>{i[0].upper()}</i>\nPhone number - <i>{i[1]}</i>\nActive cources - <i>{i[2]}</i>\nRole - <i>{i[4]}</i>\nExtra role - <i>{i[5]}</i>\nMonthly payment - <i>{i[6]}</i>\nInvite people - <i>{i[7]}</i>  </b>",parse_mode=ParseMode.HTML)
 
-"""courses"""
+
+"""Command course """
 @router.message(Command('courses'))
 async def show2_courses(message:Message):
     courses=await courses_info.show_courses()
     markup = InlineKeyboardBuilder()
     for course in courses:
-        markup.row(InlineKeyboardButton(text=f"{course[1]}", callback_data=f"course:{course[0]}"))
+        markup.row(InlineKeyboardButton(text=f"{course[1]}",switch_inline_query_current_chat=f"#{course[1]}"))
     markup.row(InlineKeyboardButton(text="back", callback_data='back'))
     await message.answer ('List of courses we have available',reply_markup=markup.as_markup())
 
 @router.callback_query(F.data.startswith('course'))
 async def language_coding(callback:CallbackQuery):
     #await callback.message.edit_text(callback.data.split(":"))
-    dataes=callback.data.split(':')
-    print(dataes)
-    await callback.message.answer(f"<i><b>{dataes[0].upper()}:{dataes[1].upper()}</b></i>\n<b>{dataes[2]}</b>\n{dataes[3]}",parse_mode=ParseMode.HTML)
     cancel2=InlineKeyboardBuilder()
     cancel2.add(InlineKeyboardButton(text='back',callback_data='back4'))
-     
+    data=await courses_info.findById(callback)
+    for dataes in data:
+        await callback.message.answer(f"<i><b> <a href='{dataes[3]}'>{dataes[1].upper()}</a>\nDescription:{dataes[2].upper()}</b></i>\n<b>img</b>\n<b>Price:{dataes[4]}</b>",parse_mode=ParseMode.HTML,reply_markup=cancel2.as_markup())
+
+    """ This imported in client_qury.py. All inline_query function are here"""
+dp.include_router(router=client_query.router)
+
+
+
 """Empty handler"""
 #@router.message()
 #async def empty_handler(message:Message):
