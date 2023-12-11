@@ -20,7 +20,7 @@ def sql_start():
 
     if db:
         print('Data base connected OK!')
-    execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,programming_languages,user_id INT,role,extra_role,payments,invite_people)""")
+    execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,active_course,user_id INT,role,extra_role,payments,invite_people,cashback,debt)""")
     #execute("INSERT INTO info_users(user_id) VALUES(1)")
     db.commit()
     execute("CREATE TABLE IF NOT EXISTS info_courses(id int IDENTITY(1,1) PRIMARY KEY,name,description,url ,price)")
@@ -61,6 +61,20 @@ async def profile_query(query):
     profile=cur.fetchall()
     return profile
 
+
+"""Command accounting function"""
+
+async def accounting(message):
+    data=[message.from_user.id]
+    cur.execute("SELECT name,payments,invite_people,cashback,debt FROM info_users WHERE user_id=?",data,)
+    accunt=cur.fetchall()
+    return accunt
+
+async def accounting_query(query):
+    data=[query.from_user.id]
+    cur.execute("SELECT name,payments,invite_people,cashback,debt FROM info_users WHERE user_id=?",data,)
+    acc_query=cur.fetchall()
+    return acc_query
 
 
 

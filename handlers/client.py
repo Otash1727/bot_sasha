@@ -13,7 +13,7 @@ from keyboard import client_kb
 from database import client_info,courses_info
 from handlers.inline_query import client_query
 from create_bot import bot, dp
-import logging
+import logging,asyncio
 import time
 from create_bot import bot 
 import re
@@ -73,8 +73,6 @@ async def input_phone(message:Message,state:FSMContext):
     await client_info.add_user_info(state)
     await state.clear() 
     answeredMessage = await message.answer('You have registed \n Please select the commands to use the bot')
-    #time.sleep(2);
-    #await sendedMessage.delete();
     await bot.set_my_commands([BotCommand(command='profile',description='User\'s informations'),BotCommand(command='accounting',description='your balance and cashback, monthly payments'),BotCommand(command='lesson', description='List of lessons'),BotCommand(command='courses',description='List of courses'),BotCommand(command='settings',description='Bot settings'),BotCommand(command='cancel',description='cancel the current operation'),BotCommand(command='help',description='help')],BotCommandScopeChat(chat_id=message.from_user.id))
     await bot.send_message(chat_id=message.from_user.id, text="<i><b>The list of commands to use the bot for you</b></i> \n \n /start - <b>run the bot</b>\n \n /profile -<b> User's information</b>\n \n /accounting - <b>your balance and cashback,monthly paymets</b>\n \n /courses -<b> about list of our courses</b>\n \n /lesson - <b>your lessons and homeworks</b>\n \n /settings - <b>options of the bot</b> ",parse_mode=ParseMode.HTML)
    
@@ -91,6 +89,7 @@ async def skip_command(callback:CallbackQuery,state:FSMContext):
 async def back2 (callback:CallbackQuery,state:FSMContext):
         await callback.message.edit_text('Hi!. Welcome to the IT park of the bot\n Input your name',reply_markup=client_kb.start_up)
         await state.set_state(Form.name)
+    
 
 @router.callback_query(F.data=='about_us')
 async def about_command(callback:CallbackQuery):
@@ -178,7 +177,26 @@ async def language_coding(callback:CallbackQuery):
     for dataes in data:
         await callback.message.answer(f"<i><b> <a href='{dataes[3]}'>{dataes[1].upper()}</a>\nDescription:{dataes[2].upper()}</b></i>\n<b>img</b>\n<b>Price:{dataes[4]}</b>",parse_mode=ParseMode.HTML,reply_markup=cancel2.as_markup())
 
-    """ This imported in client_qury.py. All inline_query function are here"""
+"""accounting"""
+async def AccountingInfo(message:Message):
+    data=await client_info.accounting(message)
+    
+        
+
+@router.message(Command('accounting'))
+async def accounting_info(message:Message):
+    data=await client_info.accounting(message)
+    for dataes in data:
+        await message.answer(text=f"<b>{dataes[0].upper()}</b>\nYour payment: <b><i>{dataes[1]}</i></b>\nPeople you invite: <b><i>{dataes[2]}</i></b>\nYour cashback: <b><i>{dataes[3]}</i></b>\nYour debt: <b><i>{dataes[4]}</i></b>",parse_mode=ParseMode.HTML)
+    
+       #if data is  None:
+    #    return print(0)
+    #print(data)
+    #message.edit_text(f"<b>Your monthly payment {data[0]}</b>")
+
+    
+
+""" This imported in client_qury.py. All inline_query function are here"""
 dp.include_router(router=client_query.router)
 
 
