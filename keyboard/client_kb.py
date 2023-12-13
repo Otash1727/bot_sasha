@@ -31,32 +31,6 @@ client_profile_kb=InlineKeyboardMarkup(
    
 )
 
-
-
-client_group=InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text='Python',callback_data='python_info'),
-            InlineKeyboardButton(text='Php',callback_data='php_info')
-        ],
-        [
-            InlineKeyboardButton(text='Html Css', callback_data='htmlcss_info'),
-            InlineKeyboardButton(text='Flutter', callback_data='flutter_info')
-        ],
-        [
-            InlineKeyboardButton(text='back',callback_data='back3')
-        ]
-    ]
-)   
-
-
-start_up=InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text='Skip >>',callback_data='skip')
-        ]
-    ]
-)
 about_us=InlineKeyboardMarkup(
     inline_keyboard=[
         [
@@ -66,22 +40,12 @@ about_us=InlineKeyboardMarkup(
         [
           InlineKeyboardButton(text='back',callback_data='back2') 
         ]
+    ])
+start_up=InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Skip >>',callback_data='skip')
+        ]
     ]
 )
 
-
-client_group2=InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text='Python',callback_data='python_info'),
-            InlineKeyboardButton(text='Php',callback_data='php_info')
-        ],
-        [
-            InlineKeyboardButton(text='Html Css', callback_data='htmlcss_info'),
-            InlineKeyboardButton(text='Flutter', callback_data='flutter_info')
-        ],
-        [
-            InlineKeyboardButton(text='back3',callback_data='back3')
-        ]
-    ]
-)  

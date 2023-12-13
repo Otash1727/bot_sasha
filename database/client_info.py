@@ -23,7 +23,7 @@ def sql_start():
     execute("""CREATE TABLE IF NOT EXISTS info_users(name,phone,active_course,user_id INT,role,extra_role,payments,invite_people,cashback,debt)""")
     #execute("INSERT INTO info_users(user_id) VALUES(1)")
     db.commit()
-    execute("CREATE TABLE IF NOT EXISTS info_courses(id int IDENTITY(1,1) PRIMARY KEY,name,description,url ,price)")
+    execute("CREATE TABLE IF NOT EXISTS info_courses(id int IDENTITY(1,1) PRIMARY KEY,name,description,url ,price,logo_url)")
     execute("CREATE TABLE IF NOT EXISTS groups(id,course_id)")
     execute("CREATE TABLE IF NOT EXISTS group_participant(group_id,user_id,role)")
     #execute("INSERT INTO info_courses(python_info) VALUES('GGG')")
@@ -72,7 +72,7 @@ async def accounting(message):
 
 async def accounting_query(query):
     data=[query.from_user.id]
-    cur.execute("SELECT name,payments,invite_people,cashback,debt FROM info_users WHERE user_id=?",data,)
+    cur.execute("SELECT payments,invite_people,cashback,debt FROM info_users WHERE user_id=?",data,)
     acc_query=cur.fetchall()
     return acc_query
 

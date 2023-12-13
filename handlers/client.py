@@ -2,7 +2,7 @@ from aiogram import Router ,F
 from aiogram.enums import ParseMode
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder,InlineKeyboardButton,KeyboardBuilder,InlineKeyboardMarkup 
 from aiogram.utils.deep_linking import decode_payload,create_deep_link
-from aiogram.types import Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault,InlineQuery,InlineQueryResultArticle,InputTextMessageContent,ChosenInlineResult
+from aiogram.types import Message,BotCommand,BotCommandScopeChat,CallbackQuery,BotCommandScopeDefault,InlineQuery,InlineQueryResultArticle,InputTextMessageContent,ChosenInlineResult,FSInputFile
 from aiogram.methods.delete_my_commands import DeleteMyCommands
 from aiogram.utils.formatting import Text, Bold
 from aiogram.filters import Command, CommandStart, Filter
@@ -113,8 +113,12 @@ async def about_command(callback:CallbackQuery):
 
 @router.callback_query(F.data=='ourcourses')
 async def about_courses(callback:CallbackQuery):
-    await callback.message.edit_text('List of courses we have available',reply_markup=client_kb.client_group) 
-
+    courses=await courses_info.show_courses()
+    markup = InlineKeyboardBuilder()
+    for course in courses:
+        markup.row(InlineKeyboardButton(text=f"{course[1]}",switch_inline_query_current_chat=f"#{course[1]}"))
+    markup.row(InlineKeyboardButton(text="back", callback_data='back'))
+    await callback.message.answer('List of courses we have available',reply_markup=markup.as_markup())
 
 
 """BUTTON back"""
@@ -136,7 +140,7 @@ async def back_4(callback:CallbackQuery):
 async def back1(callback:CallbackQuery):
     await callback.message.edit_text('You can find out about us here',reply_markup=client_kb.about_us)
 
-@router.callback_query(F.data=='back3')
+@router.callback_query(F.data=='back')
 async def back1(callback:CallbackQuery):
     data=await client_info.show_user_id()
     if len(data)==0: 
@@ -154,10 +158,13 @@ async def back1(callback:CallbackQuery):
 @router.message(Command('profile'))
 async def profile_command(message:Message):
     data=await client_info.profile_funtions(message=message)
+    file_id=[]
     for i in data:
         await message.answer(f"<b>Full name - <i>{i[0].upper()}</i>\nPhone number - <i>{i[1]}</i>\nActive cources - <i>{i[2]}</i>\nRole - <i>{i[4]}</i>\nExtra role - <i>{i[5]}</i>\nMonthly payment - <i>{i[6]}</i>\nInvite people - <i>{i[7]}</i>  </b>",parse_mode=ParseMode.HTML)
-
-
+        #image_from_pc = FSInputFile("dd.png")
+        #result= await message.answer_photo(image_from_pc,caption="Изображение из файла на компьютере")
+        #file_id.append(result.photo[-1].file_id)
+        #print(file_id)
 """Command course """
 @router.message(Command('courses'))
 async def show2_courses(message:Message):
@@ -189,10 +196,7 @@ async def accounting_info(message:Message):
     for dataes in data:
         await message.answer(text=f"<b>{dataes[0].upper()}</b>\nYour payment: <b><i>{dataes[1]}</i></b>\nPeople you invite: <b><i>{dataes[2]}</i></b>\nYour cashback: <b><i>{dataes[3]}</i></b>\nYour debt: <b><i>{dataes[4]}</i></b>",parse_mode=ParseMode.HTML)
     
-       #if data is  None:
-    #    return print(0)
-    #print(data)
-    #message.edit_text(f"<b>Your monthly payment {data[0]}</b>")
+    
 
     
 
