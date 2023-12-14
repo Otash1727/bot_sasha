@@ -160,7 +160,7 @@ async def profile_command(message:Message):
     data=await client_info.profile_funtions(message=message)
     file_id=[]
     for i in data:
-        await message.answer(f"<b>Full name - <i>{i[0].upper()}</i>\nPhone number - <i>{i[1]}</i>\nActive cources - <i>{i[2]}</i>\nRole - <i>{i[4]}</i>\nExtra role - <i>{i[5]}</i>\nMonthly payment - <i>{i[6]}</i>\nInvite people - <i>{i[7]}</i>  </b>",parse_mode=ParseMode.HTML)
+        await message.answer(f"<b>Full name - <i>{i[0].upper()}</i>\nPhone number - <i>{i[1]}</i>\nActive cources - <i>{i[2]}</i>\nRole - <i>{i[4]}</i>\nExtra role - <i>{i[5]}</i>\nMonthly payment - <i>{i[6]}</i>\nInvite people - <i>{i[7]}</i>\nCashback - <i>{i[8]}</i>\nDebt - <i>{i[9]}</i>  </b>",parse_mode=ParseMode.HTML)
         #image_from_pc = FSInputFile("dd.png")
         #result= await message.answer_photo(image_from_pc,caption="Изображение из файла на компьютере")
         #file_id.append(result.photo[-1].file_id)

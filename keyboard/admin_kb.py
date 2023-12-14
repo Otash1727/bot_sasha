@@ -13,16 +13,17 @@ from aiogram.types import (ReplyKeyboardMarkup,ReplyKeyboardRemove,KeyboardButto
 admin_window_kb=InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text=' 🔍 Search in all catigories', switch_inline_query_current_chat='python')]
-            ,
+            InlineKeyboardButton(text=' 🔍 Search in all catigories', switch_inline_query_current_chat='')
+        ]
+        ,
         [
-            InlineKeyboardButton(text='Add informations ',callback_data='schoolinfo'),
-            InlineKeyboardButton(text='Transactions',callback_data='transaction')
+            InlineKeyboardButton(text=' Users ',switch_inline_query_current_chat='$')],
+        [
+            InlineKeyboardButton(text=' Courses ',switch_inline_query_current_chat='#')
         ],
         [
          #   InlineKeyboardButton(text='Create',callback_data='create'),
-            InlineKeyboardButton(text='Group',callback_data='group'),
-            InlineKeyboardButton(text='Settings',callback_data='settings'),
+            InlineKeyboardButton(text=' Group ',switch_inline_query_current_chat='@')
         ]
     ]   
 )
