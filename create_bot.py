@@ -1,5 +1,9 @@
+from os import getenv
 from aiogram import Dispatcher,Bot
+from dotenv import load_dotenv
 
 
-bot=Bot('6881326098:AAEbpDodIFDdQwUHn_rqUFfVvZNUMrXu2j0')
+load_dotenv()
+token = getenv('token')
+bot=Bot(token)
 dp=Dispatcher()
